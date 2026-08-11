@@ -1,0 +1,2266 @@
+<!DOCTYPE html>
+<html lang="es"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mariana Mendoza Soler — ¡Un añito!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&amp;family=Quicksand:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pink:#ffd6e4;
+    --pink-deep:#ff8fb1;
+    --lavender:#e6d9ff;
+    --lavender-deep:#c9b6f0;
+    --mint:#c8f4de;
+    --peach:#ffe3c2;
+    --sky:#cdeeff;
+    --yellow:#fff3b0;
+    --cream:#fff6f0;
+    --text:#6b5560;
+    --gold:#e3b878;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:'Quicksand',sans-serif;
+    background:var(--cream);
+    color:var(--text);
+    overflow:hidden;
+    touch-action:manipulation;
+  }
+  .script{font-family:'Dancing Script',cursive;}
+
+  #app{
+    position:fixed; inset:0;
+    width:100%; height:100%;
+    overflow:hidden;
+  }
+
+  /* ============ sparkle background layer (shared) ============ */
+  .sparkle-layer{
+    position:fixed; inset:0; z-index:1; pointer-events:none; overflow:hidden;
+  }
+  .sparkle{
+    position:absolute;
+    opacity:.6;
+  }
+  .sparkle-inner{
+    animation:twinkle 2.6s ease-in-out infinite;
+    display:inline-block;
+  }
+  @keyframes twinkle{0%,100%{opacity:.25; transform:scale(.8);} 50%{opacity:.9; transform:scale(1.15);}}
+  @keyframes driftUp{0%{transform:translateY(0);} 100%{transform:translateY(-65vh);}}
+
+  /* ============ INTRO (day counter) ============ */
+  #introScreen{
+    position:absolute; inset:0; z-index:50;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    background:radial-gradient(circle at 50% 30%, #fff 0%, var(--cream) 55%, var(--pink) 130%);
+  }
+  .intro-rings{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:0;
+  }
+  .ring{
+    position:absolute;
+    border-radius:50%;
+    border:3px solid;
+    opacity:.35;
+    animation:ringPulse 3.2s ease-in-out infinite;
+  }
+  .ring1{width:280px; height:280px; border-color:var(--pink-deep); animation-delay:0s;}
+  .ring2{width:400px; height:400px; border-color:var(--lavender-deep); animation-delay:.4s;}
+  .ring3{width:520px; height:520px; border-color:var(--mint); animation-delay:.8s;}
+  @keyframes ringPulse{0%,100%{transform:scale(1); opacity:.15;} 50%{transform:scale(1.08); opacity:.4;}}
+
+  .intro-content{
+    position:relative; z-index:2;
+    transform:scale(.3);
+    opacity:0;
+    animation:introPop .7s cubic-bezier(.17,.89,.32,1.49) forwards;
+  }
+  @keyframes introPop{to{transform:scale(1); opacity:1;}}
+
+  .count-number{
+    font-family:'Dancing Script',cursive;
+    font-weight:700;
+    font-size:clamp(5rem,26vw,9rem);
+    line-height:1;
+    background:linear-gradient(90deg,#ff9aa2,#ffb27a,#ffe08a,#b6e3a8,#a8d8ea,#c9b6f0);
+    background-size:300% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:gradientShift 3s linear infinite;
+  }
+  @keyframes gradientShift{0%{background-position:0% 50%;} 100%{background-position:300% 50%;}}
+
+  .count-label{font-size:1.3rem; font-weight:700; letter-spacing:1px; color:var(--pink-deep); margin-top:-6px;}
+  .count-sub{font-size:1rem; color:var(--text); margin-top:14px; max-width:280px; margin-left:auto; margin-right:auto; text-wrap:balance;}
+
+  #introScreen.exit{animation:introExit .6s ease forwards;}
+  @keyframes introExit{to{transform:scale(1.3); opacity:0;}}
+
+  /* ============ PANTALLA DE INICIO (obligatoria por los navegadores para poder sonar con volumen) ============
+     Ningún sitio puede reproducir audio con sonido sin que la persona toque la pantalla primero — es una regla
+     de Chrome/Safari/Firefox para TODAS las páginas, no algo que se pueda evitar con código. Por eso el primer
+     toque de esta pantalla de bienvenida es lo que dispara la música: así arranca lo antes técnicamente posible. */
+  #startGate{
+    position:fixed; inset:0; z-index:80;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; cursor:pointer;
+    background:#f2e4cd; /* mismo tono crema del fondo de Intro.PNG, para que no se note el marco */
+  }
+  #startGate.exit{pointer-events:none;}
+  #startGate.exit .start-gate-img{
+    animation:startGateDissolve .6s ease forwards;
+  }
+  @keyframes startGateDissolve{
+    0%{opacity:1; transform:scale(1);}
+    100%{opacity:0; transform:scale(1.08);}
+  }
+  .start-gate-img{
+    max-width:100%; max-height:100%; width:auto; height:auto;
+    display:block;
+    transform:scale(.3); opacity:0;
+    animation:introPop .7s cubic-bezier(.17,.89,.32,1.49) forwards;
+  }
+  /* respiración lenta en un envoltorio aparte, para no pelear con la animación de entrada
+     de la imagen (las dos tocan "transform", por eso van en elementos distintos) */
+  .start-gate-img-wrap{
+    animation:startGateBreathe 3.4s ease-in-out 1.1s infinite;
+  }
+  @keyframes startGateBreathe{0%,100%{transform:scale(1);} 50%{transform:scale(1.025);}}
+
+  /* chispas y pétalos flotando sobre la pantalla de inicio, para que se sienta viva antes de tocarla */
+  .start-gate-fx{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:2; }
+  .startgate-fx-sparkle{
+    position:absolute;
+    animation-name:twinkle; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+  }
+  .startgate-fx-petal{
+    position:absolute; top:-8%; opacity:.85;
+    animation-name:petalFall; animation-timing-function:linear; animation-iteration-count:infinite;
+  }
+  @keyframes petalFall{
+    0%{transform:translateY(0) rotate(0deg);}
+    100%{transform:translateY(115vh) rotate(300deg);}
+  }
+
+  /* estrellitas del desvanecido al tocar la pantalla de inicio */
+  .startgate-star{
+    position:fixed; z-index:90; pointer-events:none;
+    animation:startgateStarBurst .95s ease-out forwards;
+  }
+  @keyframes startgateStarBurst{
+    0%{opacity:1; transform:translate(0,0) scale(1) rotate(0deg);}
+    100%{opacity:0; transform:translate(var(--sx),var(--sy)) scale(.25) rotate(200deg);}
+  }
+
+  /* ============ RAINBOW WIPE TRANSITION ============ */
+  .rainbow-wipe{
+    position:fixed; inset:0; z-index:200;
+    width:140vw; height:100%;
+    left:-20vw;
+    /* stops de un solo punto (sin rangos) = las franjas se funden entre sí en vez de cortar en seco */
+    background:repeating-linear-gradient(115deg,
+      #ff6f9c 0%, #ff9f5a 8%, #ffe066 16%,
+      #7fe0a0 24%, #5fc9f0 32%, #b78af0 40%, #ff6f9c 48%);
+    filter:saturate(1.35) brightness(1.12) blur(3px) drop-shadow(0 0 30px rgba(255,255,255,.55));
+    /* las puntas izquierda/derecha de la franja se desvanecen en vez de terminar en un borde recto */
+    -webkit-mask-image:linear-gradient(115deg, transparent 0%, black 14%, black 86%, transparent 100%);
+    mask-image:linear-gradient(115deg, transparent 0%, black 14%, black 86%, transparent 100%);
+    transform:translateX(-120%);
+    opacity:0;
+    pointer-events:none;
+  }
+  /* brillo que recorre el puente, encima de las franjas de color, tipo destello del Bifrost */
+  .rainbow-wipe::after{
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.85) 50%, transparent 60%);
+    background-size:250% 100%;
+    mix-blend-mode:overlay;
+    opacity:0;
+  }
+  .rainbow-wipe.animate{
+    animation:wipeAcross 1.7s cubic-bezier(.6,0,.4,1) forwards;
+  }
+  .rainbow-wipe.animate::after{
+    animation:wipeShimmer 1.7s cubic-bezier(.6,0,.4,1) forwards;
+  }
+  @keyframes wipeAcross{
+    0%{transform:translateX(-120%); opacity:1;}
+    50%{transform:translateX(0%); opacity:1;}
+    100%{transform:translateX(120%); opacity:1;}
+  }
+  @keyframes wipeShimmer{
+    0%{background-position:120% 0; opacity:0;}
+    45%{opacity:1;}
+    55%{opacity:1;}
+    100%{background-position:-60% 0; opacity:0;}
+  }
+
+  /* chispitas que se sueltan mientras el puente de luz cruza la pantalla */
+  .wipe-sparkle{
+    position:fixed; z-index:201; pointer-events:none;
+    line-height:1;
+    animation:wipeSparkleFade .9s ease-out forwards;
+  }
+  @keyframes wipeSparkleFade{
+    0%{opacity:0; transform:scale(.3) rotate(0deg);}
+    30%{opacity:1; transform:scale(1.15) rotate(25deg);}
+    100%{opacity:0; transform:scale(.4) translateY(18px) rotate(70deg);}
+  }
+
+  /* ============ SLIDES STAGE ============ */
+  #stage{
+    position:absolute; inset:0; z-index:10;
+    display:none;
+  }
+  #stage.active{display:block;}
+
+  .slide{
+    position:absolute; inset:0;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:26px 22px 90px;
+    background:radial-gradient(circle at 50% 0%, #fff 0%, var(--cream) 60%);
+  }
+  .slide.active{display:flex;}
+
+  /* ============ FONDO VIVO DE LAS FOTOS: arcoíris grande, estrellitas, nubes con profundidad, globos, feria ============ */
+  .slide-deco{
+    position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0;
+  }
+
+  /* arcoíris real (SVG) tipo Bifrost: ahora de punta a punta de la pantalla, tocando ambos bordes,
+     con brillo y respiración lenta — cubre buena parte del fondo, no solo una esquina */
+  .deco-rainbow-arc{
+    position:absolute; top:-3%; left:0;
+    width:100%;
+    animation:rainbowBreathe 7s ease-in-out infinite;
+  }
+  @keyframes rainbowBreathe{
+    0%,100%{opacity:.42; transform:scale(1);}
+    50%{opacity:.62; transform:scale(1.025);}
+  }
+  /* destello de energía tipo "activación del puente": un resplandor blanco que crece y se apaga */
+  .deco-bifrost-flare{
+    position:absolute; top:-6%; left:50%; width:70%; max-width:380px; aspect-ratio:1/1;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 68%);
+    mix-blend-mode:screen;
+    pointer-events:none;
+    animation:bifrostFlare 6s ease-in-out infinite;
+  }
+  @keyframes bifrostFlare{
+    0%,100%{opacity:.12; transform:translateX(-50%) scale(.82);}
+    50%{opacity:.5; transform:translateX(-50%) scale(1.18);}
+  }
+  /* lavado de color ambiental muy suave, cubre todo el fondo del slide para que el arco no se sienta aislado arriba */
+  .deco-aurora-wash{
+    position:absolute; inset:0;
+    background:conic-gradient(from 200deg at 50% -30%,
+      #ff6f9c, #ff9f5a, #ffe066, #7fe0a0, #5fc9f0, #b78af0, #ff6f9c);
+    opacity:.14;
+    mix-blend-mode:multiply;
+    filter:blur(30px);
+    animation:auroraSpin 22s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes auroraSpin{ 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+
+  .deco-star{
+    position:absolute;
+    animation-name:starTwinkle; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+  }
+  @keyframes starTwinkle{
+    0%,100%{opacity:.15; transform:scale(.7) rotate(0deg);}
+    50%{opacity:.85; transform:scale(1.25) rotate(20deg);}
+  }
+
+  .deco-cloud-drift{
+    position:absolute;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.05));
+    animation-name:cloudDriftMove; animation-timing-function:linear; animation-iteration-count:infinite;
+  }
+  @keyframes cloudDriftMove{
+    0%{transform:translateX(-25vw);}
+    100%{transform:translateX(125vw);}
+  }
+
+  .deco-balloon-drift{
+    position:absolute; opacity:.55;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.1));
+    animation-name:balloonFloatMove; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+  }
+  @keyframes balloonFloatMove{
+    0%,100%{transform:translate(0,0) rotate(-6deg);}
+    25%{transform:translate(6px,-14px) rotate(4deg);}
+    50%{transform:translate(-4px,-30px) rotate(-4deg);}
+    75%{transform:translate(5px,-14px) rotate(6deg);}
+  }
+
+  .deco-carousel{
+    position:absolute; bottom:2%; opacity:.4;
+    filter:drop-shadow(0 4px 6px rgba(0,0,0,.08));
+    animation-name:carouselDriftMove; animation-timing-function:linear; animation-iteration-count:infinite;
+  }
+  @keyframes carouselDriftMove{
+    0%{transform:translateX(-15vw) translateY(0) rotate(0deg);}
+    50%{transform:translateX(60vw) translateY(-10px) rotate(-4deg);}
+    100%{transform:translateX(125vw) translateY(0) rotate(0deg);}
+  }
+
+  /* protagonista de la escena: grande, con anillo blanco para separarse del arcoíris de fondo,
+     y una entrada con rebote bien marcada en vez de un simple fade */
+  .month-chip{
+    position:relative; z-index:10;
+    display:inline-flex; align-items:center; justify-content:center;
+    background:linear-gradient(135deg,var(--pink-deep),#ff6f9c);
+    color:#fff;
+    font-weight:800;
+    font-size:1.4rem;
+    letter-spacing:2px;
+    padding:13px 36px;
+    border-radius:999px;
+    box-shadow:0 12px 28px rgba(255,111,156,.5), 0 0 0 4px rgba(255,255,255,.75);
+    margin-bottom:22px;
+    text-transform:uppercase;
+    animation:chipHero .8s cubic-bezier(.18,.85,.3,1.35) both,
+              chipGlow 2.6s ease-in-out .9s infinite;
+  }
+  @keyframes chipHero{
+    0%{opacity:0; transform:translateY(-46px) scale(.35) rotate(-10deg);}
+    55%{opacity:1; transform:translateY(8px) scale(1.14) rotate(3deg);}
+    80%{transform:translateY(-3px) scale(.97) rotate(-1deg);}
+    100%{opacity:1; transform:translateY(0) scale(1) rotate(0deg);}
+  }
+  @keyframes chipGlow{
+    0%,100%{box-shadow:0 12px 28px rgba(255,111,156,.5), 0 0 0 4px rgba(255,255,255,.75);}
+    50%{box-shadow:0 16px 36px rgba(255,111,156,.7), 0 0 0 6px rgba(255,255,255,.95);}
+  }
+  @media (max-width:360px){ .month-chip{font-size:1.15rem; padding:11px 26px;} }
+
+  .photo-frame{
+    position:relative;
+    width:min(72vw,320px);
+    height:min(72vw,320px);
+    border-radius:50%;
+    padding:8px;
+    background:linear-gradient(135deg,var(--pink),var(--lavender));
+    box-shadow:0 20px 45px rgba(255,140,180,.35);
+    border:5px solid var(--pink);
+    animation:framePop .6s cubic-bezier(.2,.8,.3,1.2);
+    overflow:hidden;
+  }
+  /* mientras la foto carga se ve un lindo degradado latiendo (no un hueco en blanco);
+     cuando termina de cargar, aparece con un fundido suave en vez de aparecer de golpe */
+  @keyframes placeholderPulse{0%,100%{opacity:1;} 50%{opacity:.75;}}
+
+  @keyframes framePop{from{opacity:0; transform:scale(.7) rotate(-6deg);} to{opacity:1; transform:scale(1) rotate(0);}}
+  /* Ken Burns: zoom lentísimo y continuo mientras la foto está activa, sin tocar el transform del <img>
+     (que ya lo maneja el JS para el encuadre manual) — se anima el marco en su lugar */
+  .slide.active .photo-frame{
+    animation: framePop .6s cubic-bezier(.2,.8,.3,1.2), kenBurnsFrame 9s ease-in-out .6s infinite alternate;
+  }
+  /* mientras esta foto en particular todavía no cargó, el latido gana por especificidad
+     (si no, kenBurnsFrame de arriba lo tapa) */
+  .slide.active .photo-frame:not(.ph-loaded){
+    animation: framePop .6s cubic-bezier(.2,.8,.3,1.2), placeholderPulse 1.4s ease-in-out infinite;
+  }
+  @keyframes kenBurnsFrame{0%{transform:scale(1);} 100%{transform:scale(1.045);}}
+  body.edit-mode .slide.active .photo-frame{animation:none;}
+  .photo-frame img{
+    position:absolute; top:50%; left:50%;
+    width:auto; height:auto; max-width:none;
+    display:block;
+    user-select:none; -webkit-user-drag:none;
+    transform-origin:center center;
+    opacity:0;
+    transition:opacity .4s ease;
+  }
+  .photo-frame.ph-loaded img{ opacity:1; }
+
+  .photo-frame::after{
+    content:'🌈';
+    position:absolute;
+    bottom:-6px; right:-6px;
+    font-size:34px;
+    background:#fff;
+    border-radius:50%;
+    width:48px; height:48px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 14px rgba(0,0,0,.15);
+    z-index:5;
+  }
+  body.edit-mode .photo-frame::after{display:none;}
+
+  .crop-guide{
+    position:absolute; inset:0;
+    border-radius:50%;
+    border:2px dashed rgba(255,255,255,.95);
+    box-shadow:0 0 0 2000px rgba(20,10,15,.45);
+    pointer-events:none;
+    display:none;
+    z-index:15;
+  }
+  body.edit-mode .crop-guide{display:block;}
+  body.edit-mode .photo-frame{overflow:visible;}
+  body.edit-mode .photo-frame img{box-shadow:0 0 0 2px rgba(0,0,0,.2);}
+
+  .slide-caption{margin-top:24px; max-width:420px;}
+  .slide-caption h2{
+    font-family:'Dancing Script',cursive;
+    font-size:2.1rem;
+    color:var(--pink-deep);
+    margin:0 0 8px;
+    animation:fadeUp .6s ease-out .1s both;
+  }
+  .slide-caption p{
+    font-size:1rem;
+    line-height:1.55;
+    margin:0;
+    color:var(--text);
+    animation:fadeUp .6s ease-out .2s both;
+  }
+  @keyframes fadeUp{from{opacity:0; transform:translateY(16px);} to{opacity:1; transform:translateY(0);}}
+
+  .tap-hint{
+    position:absolute;
+    bottom:96px; left:0; right:0;
+    text-align:center;
+    font-size:.85rem;
+    color:var(--pink-deep);
+    font-weight:600;
+    animation:pulseHint 1.8s ease-in-out infinite;
+  }
+  @keyframes pulseHint{0%,100%{opacity:.5;} 50%{opacity:1;}}
+
+  .dots{display:none;}
+  .dot{width:7px; height:7px; border-radius:50%; background:#eeded9; transition:all .3s ease;}
+  .dot.done{background:var(--pink-deep);}
+  .dot.now{background:var(--pink-deep); width:20px; border-radius:5px;}
+
+  /* barra de progreso arcoíris, reemplaza a los puntitos */
+  .progress-track{
+    position:absolute; bottom:30px; left:0; right:0;
+    display:flex; justify-content:center; z-index:15;
+    padding:0 32px;
+  }
+  /* envoltorio con el mismo ancho que la barra, pero SIN overflow:hidden, para que la nena
+     caminando pueda asomar por arriba de la barra sin que se la corte */
+  .progress-track-wrap{ position:relative; width:100%; max-width:220px; }
+  .progress-track-inner{
+    width:100%; height:8px; border-radius:999px;
+    background:#f2e6e2; overflow:hidden;
+    box-shadow:inset 0 1px 3px rgba(0,0,0,.08);
+  }
+  .progress-fill{
+    height:100%; width:0%; border-radius:999px;
+    background:linear-gradient(90deg,#ff9aa2,#ffb27a,#ffe08a,#b6e3a8,#a8d8ea,#c9b6f0);
+    background-size:250% 100%;
+    animation:gradientShift 4s linear infinite;
+    transition:width .5s cubic-bezier(.3,.8,.3,1);
+  }
+
+  /* nena caminando en loop justo arriba de la barra de progreso: la posición la mueve este CSS,
+     el movimiento de las piernas lo da el JS cambiando entre los 12 fotogramas reales (nena-1.png…nena-12.png) */
+  .progress-walker{
+    position:absolute; bottom:2px; left:-8%;
+    height:46px; width:auto;
+    z-index:2; pointer-events:none;
+    filter:drop-shadow(0 3px 5px rgba(0,0,0,.18));
+    animation:walkAcrossBar 6s linear infinite;
+  }
+  @keyframes walkAcrossBar{
+    0%{left:-8%; opacity:0;}
+    6%{opacity:1;}
+    94%{opacity:1;}
+    100%{left:104%; opacity:0;}
+  }
+
+  /* ============ TRANSICIONES DE SLIDE: parallax + rebote elástico ============ */
+  .slide.leaving{
+    display:flex !important;
+    animation:slideLeave .4s ease-in forwards;
+    z-index:1;
+  }
+  .slide.entering{
+    animation:slideEnter .65s cubic-bezier(.22,.9,.28,1.25) both;
+  }
+  @keyframes slideLeave{
+    0%{opacity:1; transform:scale(1) rotate(0deg);}
+    100%{opacity:0; transform:scale(.82) rotate(-4deg);}
+  }
+  @keyframes slideEnter{
+    0%{opacity:0; transform:scale(1.14) rotate(3deg);}
+    100%{opacity:1; transform:scale(1) rotate(0deg);}
+  }
+
+  /* ============ STICKER TEMÁTICO POR MES ============ */
+  .month-sticker{
+    position:absolute;
+    font-size:38px;
+    top:8%; right:14%;
+    z-index:6;
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,.18));
+    pointer-events:none;
+  }
+  .month-sticker.fly{
+    animation:stickerFly .7s cubic-bezier(.2,.9,.3,1.3) .5s both;
+  }
+  @keyframes stickerFly{
+    0%{opacity:0; transform:scale(0) rotate(-40deg) translateY(20px);}
+    70%{opacity:1; transform:scale(1.2) rotate(8deg) translateY(-4px);}
+    100%{opacity:1; transform:scale(1) rotate(0deg) translateY(0);}
+  }
+
+  /* ============ FINAL INVITATION CARD (mes 12) — usa la imagen real de referencia como fondo ============ */
+  .card-slide{
+    padding:12px;
+  }
+  .invite-card{
+    display:flex; justify-content:center; align-items:center;
+    width:100%; height:100%;
+    animation:cardPop .8s cubic-bezier(.2,.8,.3,1.15) .9s both;
+  }
+  @keyframes cardPop{from{opacity:0; transform:scale(.8) translateY(30px);} to{opacity:1; transform:scale(1) translateY(0);}}
+
+  /* card-inner se achica al tamaño exacto de la imagen ya escalada (display:inline-block = shrink-wrap),
+     así el overlay (posicionado en % encima) queda siempre pegado a la imagen real, sin importar el tamaño de pantalla.
+     La imagen entra completa SIEMPRE: se limita tanto por ancho (92vw) como por alto (94vh), lo que la achique primero. */
+  /* OJO: a propósito SIN overflow:hidden acá. Si algún día el contenido del overlay (botones, texto)
+     mide un poco más que la imagen, que se vea "sobrando" abajo es siempre mejor que perder contenido
+     recortado — por eso el borde redondeado va directo en la imagen (card-bg-img), no en este contenedor. */
+  .card-inner{
+    position:relative; display:inline-block;
+    max-width:90vw; max-height:min(calc(100vh - 30px), 660px);
+    box-shadow:0 25px 60px rgba(255,140,180,.4);
+    border-radius:24px;
+  }
+
+  .card-bg-img{
+    display:block; max-width:90vw; max-height:min(calc(100vh - 30px), 660px); width:auto; height:auto;
+    border-radius:24px;
+    -webkit-user-drag:none; user-select:none;
+  }
+
+  /* capa transparente encima de la imagen: acá van los parches que tapan el texto de muestra
+     y, sobre ellos, el texto real de Mariana, todo posicionado en % para que se mantenga
+     alineado sin importar el tamaño de pantalla */
+  .card-overlay{position:absolute; inset:0;}
+  .txt{position:absolute; left:8%; width:84%; text-align:center; line-height:1.15;}
+
+  /* nubes flotando despacio sobre la tarjeta final, para que no se sienta estática.
+     Ojo: van en su PROPIA capa con overflow:hidden, separada de .card-overlay — así se recortan
+     prolijo en los bordes de la tarjeta sin arriesgar que se vuelva a cortar el bloque de confirmar
+     (esa fue una bomba de tiempo que ya desactivamos una vez, no la reactivamos acá). */
+  .card-cloud-layer{
+    position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1; border-radius:24px;
+  }
+  .card-cloud{
+    position:absolute; pointer-events:none;
+    filter:drop-shadow(0 3px 5px rgba(0,0,0,.06));
+    animation-name:cardCloudDrift; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+  }
+  @keyframes cardCloudDrift{
+    0%{transform:translateX(-18vw);}
+    100%{transform:translateX(98vw);}
+  }
+
+  /* textura sutil de papel, para que la tarjeta se sienta física y no una imagen plana */
+  .card-paper-texture{
+    position:absolute; inset:0; border-radius:24px; pointer-events:none; z-index:1; overflow:hidden;
+    background-image:repeating-linear-gradient(135deg, rgba(120,70,50,.035) 0px, rgba(120,70,50,.035) 1px, transparent 1px, transparent 4px);
+    mix-blend-mode:multiply;
+  }
+
+  /* tinte cálido si la abren de noche, más clarito si es de día — sutil, no invasivo */
+  .card-night-tint{
+    position:absolute; inset:0; border-radius:24px; pointer-events:none; z-index:1;
+    background:linear-gradient(160deg, rgba(255,170,90,.14), rgba(120,60,140,.12));
+    opacity:0; transition:opacity 1.2s ease;
+  }
+  .card-slide.is-night .card-night-tint{ opacity:1; }
+
+  /* guirnalda de lucecitas parpadeando arriba de la tarjeta */
+  .card-garland{ position:absolute; inset:0; z-index:2; pointer-events:none; }
+  .garland-light{
+    position:absolute; width:7px; height:7px; border-radius:50%;
+    transform:translate(-50%,-50%);
+    animation:garlandTwinkle 1.8s ease-in-out infinite;
+  }
+  @keyframes garlandTwinkle{
+    0%,100%{opacity:.35; transform:translate(-50%,-50%) scale(.8);}
+    50%{opacity:1; transform:translate(-50%,-50%) scale(1.2);}
+  }
+
+  /* reacciones rápidas, esquina opuesta al regalo */
+  .card-reactions{ position:absolute; top:1.8%; left:3%; z-index:6; display:flex; gap:4px; }
+  .reaction-btn{
+    width:30px; height:30px; border-radius:50%; border:1.5px solid #ffd6e4;
+    background:linear-gradient(135deg,#fff,#fff6fa);
+    display:flex; align-items:center; justify-content:center;
+    font-size:14px; cursor:pointer; padding:0;
+    box-shadow:0 4px 10px rgba(255,140,180,.25);
+    transition:transform .2s ease;
+  }
+  .reaction-btn.reacted{ transform:scale(1.15); background:linear-gradient(135deg,#ffe9f0,#ffd6e4); }
+  .reaction-btn:active{ transform:scale(.9); }
+
+  /* insignia de "ya confirmaste" (reemplaza al botón cuando ya está registrado ese link) */
+  .ov-confirmed-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background:linear-gradient(135deg,#a8e6b0,#7fd48f); color:#2f5233;
+    font-weight:800; font-size:.76rem; padding:8px 18px; border-radius:999px;
+    box-shadow:0 8px 16px rgba(127,212,143,.4);
+  }
+
+  /* botón de compartir por WhatsApp, aparece recién después de confirmar */
+  .whatsapp-btn{
+    display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    background:linear-gradient(135deg,#8fe0a8,#5fcf85); color:#154a29;
+    font-weight:700; font-size:.68rem; padding:6px 16px; margin-top:8px;
+    border:none; border-radius:999px; cursor:pointer;
+    box-shadow:0 4px 10px rgba(95,207,133,.35);
+  }
+  .whatsapp-btn:active{transform:scale(.96);}
+
+  /* aviso de girar el celular si detecta horizontal */
+  .rotate-hint{
+    position:fixed; bottom:70px; left:50%; transform:translateX(-50%);
+    background:rgba(255,255,255,.95); padding:8px 18px; border-radius:999px;
+    font-size:.78rem; font-weight:700; color:#8a6bb0; z-index:400;
+    box-shadow:0 6px 16px rgba(0,0,0,.15);
+    display:none; align-items:center; gap:6px;
+  }
+  .rotate-hint.show{ display:flex; animation:pulseHint 1.8s ease-in-out infinite; }
+  .rotate-hint .ico{ display:inline-block; animation:rotateHintSpin 1.6s ease-in-out infinite; }
+  @keyframes rotateHintSpin{0%,100%{transform:rotate(0deg);} 50%{transform:rotate(90deg);}}
+
+  /* brillo dorado que recorre la tarjeta cuando se confirma la asistencia */
+  @keyframes goldConfirmGlow{
+    0%{box-shadow:0 25px 60px rgba(255,140,180,.4);}
+    35%{box-shadow:0 25px 60px rgba(255,140,180,.4), 0 0 55px 14px rgba(255,208,110,.9);}
+    100%{box-shadow:0 25px 60px rgba(255,140,180,.4);}
+  }
+  .card-inner.confirmed{ animation:goldConfirmGlow 1.7s ease-out 2; }
+
+  /* insignia "faltan X días", en el hueco entre la descripción y la fila de fecha/hora/lugar */
+  .ov-countdown{
+    position:absolute; top:27.5%; left:8%; width:84%;
+    text-align:center; z-index:2;
+  }
+  .ov-countdown .cd-pill{
+    display:inline-block; font-size:.6rem; font-weight:800; letter-spacing:.3px;
+    color:#7a5ba8; background:linear-gradient(135deg,#e6d9ff,#f3e9ff);
+    padding:4px 14px; border-radius:999px;
+    box-shadow:0 4px 10px rgba(180,150,230,.28);
+  }
+
+  /* ícono de regalo con un mensaje sorpresa, casi personalizado con el nombre del invitado */
+  .card-gift-icon{
+    position:absolute; top:1.8%; right:3%; z-index:6;
+    width:36px; height:36px; border-radius:50%;
+    background:linear-gradient(135deg,#fff,#fff6fa);
+    border:1.5px solid #ffd6e4;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; cursor:pointer;
+    box-shadow:0 6px 14px rgba(255,140,180,.3);
+    animation:giftIconPulse 2.2s ease-in-out infinite;
+  }
+  @keyframes giftIconPulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.1);}}
+
+  .gift-modal-backdrop{
+    position:fixed; inset:0; z-index:650;
+    background:rgba(70,35,55,.5);
+    display:none; align-items:center; justify-content:center; padding:24px;
+  }
+  .gift-modal-backdrop.open{display:flex;}
+  .gift-modal{
+    position:relative; width:100%; max-width:300px;
+    background:linear-gradient(160deg,#fff8f5 0%,#fff0f5 100%);
+    border:3px solid #ffd6e4; border-radius:26px;
+    padding:30px 24px 26px; text-align:center;
+    box-shadow:0 25px 60px rgba(0,0,0,.3);
+    animation:modalPop .4s cubic-bezier(.2,.8,.3,1.3);
+  }
+  .gift-modal-close{
+    position:absolute; top:10px; right:12px;
+    background:none; border:none; font-size:18px; color:#c1708a; cursor:pointer;
+    width:30px; height:30px; line-height:1;
+  }
+  .gift-modal-emoji{font-size:40px; margin-bottom:8px; animation:modalBounce 1.6s ease-in-out infinite;}
+  .gift-modal-msg{
+    font-family:'Dancing Script',cursive; font-weight:700; font-size:1.3rem;
+    color:#ee7093; line-height:1.35; margin:0;
+  }
+
+  /* sobre que se abre antes de que aparezca la tarjeta */
+  .envelope{
+    position:absolute; inset:0; z-index:6;
+    display:flex; align-items:center; justify-content:center;
+    perspective:800px; pointer-events:none;
+    animation:envelopeFadeOut .5s ease .95s forwards;
+  }
+  .envelope-body{
+    position:relative;
+    width:min(68vw,270px); height:min(44vw,175px);
+    background:linear-gradient(160deg,#fff6fa,#ffe3ee);
+    border-radius:10px;
+    box-shadow:0 20px 45px rgba(255,140,180,.35);
+    overflow:hidden;
+  }
+  .envelope-flap{
+    position:absolute; top:0; left:0; right:0; height:100%;
+    transform-origin:top center;
+    clip-path:polygon(0 0, 100% 0, 50% 62%);
+    background:linear-gradient(160deg,#ffd6e4,#ff9bb8);
+    animation:envelopeOpen 1s cubic-bezier(.6,0,.3,1) .35s forwards;
+  }
+  .envelope-seal{
+    position:absolute; top:38%; left:50%; transform:translate(-50%,-50%);
+    font-size:26px; z-index:2;
+    animation:envelopeSealFade .4s ease .35s forwards;
+  }
+  @keyframes envelopeOpen{ to{ transform:rotateX(-165deg); } }
+  @keyframes envelopeSealFade{ to{ opacity:0; } }
+  @keyframes envelopeFadeOut{ to{ opacity:0; visibility:hidden; } }
+
+  .ov-eyebrow{top:32.6%; font-size:.72rem; letter-spacing:1.5px; color:#a9788a; font-weight:700; text-transform:uppercase;}
+  .ov-name{
+    top:36.2%; font-family:'Dancing Script',cursive; font-weight:700;
+    font-size:clamp(2.1rem,11vw,3.1rem); line-height:1.05;
+    cursor:pointer;
+    background:linear-gradient(120deg,#ee7093 42%, #ffd9e6 50%, #ee7093 58%);
+    background-size:280% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:nameShimmer 5.5s ease-in-out infinite;
+  }
+  @keyframes nameShimmer{
+    0%,72%{background-position:220% 0;}
+    92%,100%{background-position:-60% 0;}
+  }
+  .ov-ribbon{top:48.8%; left:8%; width:84%; transform:translateY(-50%); font-size:.98rem; font-weight:700; letter-spacing:.5px; color:#8a6bb0;}
+  .ov-desc{top:55.2%; font-size:.74rem; line-height:1.5; color:#8a6a75;}
+
+  .ov-date-num{top:66.8%; left:17%; width:26%; font-size:1.5rem; font-weight:800; color:#e8899f;}
+  .ov-date-sub{top:72.3%; left:17%; width:26%; font-size:.56rem; font-weight:700; color:#a08890; letter-spacing:.5px;}
+  .ov-time{top:68.6%; left:35%; width:26%; font-size:1.1rem; font-weight:800; color:#8a7fc0;}
+  .ov-time-sub{top:72.3%; left:35%; width:26%; font-size:.56rem; font-weight:700; color:#a08890; letter-spacing:.5px;}
+  .ov-place{top:68%; left:52%; width:34%; font-size:.72rem; font-weight:800; color:#4d8f77;}
+  .ov-place-sub{top:73.4%; left:52%; width:34%; font-size:.58rem; line-height:1.35; color:#a08890;}
+
+  /* nombre del invitado, en el hueco de arriba de la tarjeta (no adentro de la imagen):
+     entra con rebote y se ajusta solo si el nombre es largo, sin cortarse */
+  .card-guest-banner{
+    position:absolute; top:6px; left:0; right:0;
+    display:flex; align-items:center; justify-content:center;
+    padding:0 20px; z-index:5; pointer-events:none;
+  }
+  .card-guest-banner-inner{
+    max-width:100%; box-sizing:border-box;
+    background:linear-gradient(160deg,#fff,#fff6fa);
+    border:1.5px solid #ffd6e4;
+    border-radius:999px;
+    padding:11px 26px;
+    box-shadow:0 10px 24px rgba(255,140,180,.28);
+    font-family:'Dancing Script',cursive; font-weight:700;
+    font-size:clamp(1.35rem,7.2vw,1.9rem);
+    color:#ee7093; text-align:center; line-height:1.2;
+    text-wrap:balance;
+    opacity:0;
+    animation:guestBannerDrop .8s cubic-bezier(.2,.8,.3,1.3) .35s forwards;
+  }
+  @keyframes guestBannerDrop{
+    0%{opacity:0; transform:translateY(-34px) scale(.6) rotate(-4deg);}
+    60%{opacity:1; transform:translateY(6px) scale(1.08) rotate(1deg);}
+    100%{opacity:1; transform:translateY(0) scale(1) rotate(0deg);}
+  }
+
+  .ov-confirm-wrap{
+    position:absolute; top:82.5%; left:8%; width:84%; box-sizing:border-box;
+    background:linear-gradient(165deg, rgba(255,255,255,.98), rgba(255,244,249,.95));
+    border:1.5px solid rgba(255,180,205,.55);
+    border-radius:20px; padding:13px 12px 12px;
+    text-align:center;
+    box-shadow:0 12px 28px rgba(255,150,190,.32), inset 0 1px 0 rgba(255,255,255,.9);
+    animation:confirmWrapPop .7s cubic-bezier(.2,.8,.3,1.25) .25s both;
+  }
+  @keyframes confirmWrapPop{
+    0%{opacity:0; transform:translateY(16px) scale(.9);}
+    100%{opacity:1; transform:translateY(0) scale(1);}
+  }
+  .ov-confirm{
+    position:static; display:inline-block;
+    font-size:.64rem; font-weight:800; letter-spacing:1.2px; color:#fff;
+    margin-bottom:9px; padding:5px 16px; border-radius:999px;
+    background:linear-gradient(135deg,#ff9bb8,#ff6f9c);
+    box-shadow:0 5px 12px rgba(255,111,156,.4);
+  }
+  .ov-confirm-wrap .ov-rsvp-btn{
+    padding:9px 24px; font-size:.8rem; min-height:38px;
+    box-shadow:0 10px 20px rgba(127,212,143,.45), inset 0 1px 0 rgba(255,255,255,.5);
+  }
+  .ov-confirm-wrap .cal-btn{
+    padding:6px 16px; font-size:.65rem; margin-top:9px; min-height:30px;
+    background:linear-gradient(135deg,#fff,#faf5ff);
+    box-shadow:0 4px 10px rgba(183,138,240,.2);
+  }
+  .ov-confirm-divider{
+    display:flex; align-items:center; gap:8px;
+    margin:8px auto 0; width:70%;
+  }
+  .ov-confirm-divider::before,.ov-confirm-divider::after{
+    content:''; flex:1; height:1px; background:linear-gradient(90deg,transparent,rgba(200,170,190,.4),transparent);
+  }
+  .ov-confirm-divider span{font-size:.6rem; color:#c99fb0;}
+
+  .rsvp-input{
+    display:block; width:100%; box-sizing:border-box;
+    padding:9px 14px; margin-bottom:8px; border-radius:999px;
+    border:1.5px solid #f3c6d4; background:#fff; font-family:'Quicksand',sans-serif;
+    font-size:.82rem; color:#6b5560; text-align:center;
+  }
+  .rsvp-input:focus{outline:none; border-color:#ff8fb1;}
+  .rsvp-locked-name{
+    font-family:'Dancing Script',cursive; font-weight:700; font-size:1.7rem;
+    color:#ff6f9c; margin-bottom:12px; line-height:1.15;
+  }
+
+  .ov-rsvp-btn{
+    display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    background:linear-gradient(135deg,#a8e6b0,#7fd48f);
+    color:#2f5233; font-weight:700; font-size:.82rem;
+    padding:9px 20px; border:none; border-radius:999px; cursor:pointer;
+    box-shadow:0 8px 16px rgba(127,212,143,.4);
+    transition:transform .2s ease;
+  }
+  .ov-rsvp-btn:active{transform:scale(.96);}
+  .rsvp-msg{
+    margin-top:4px; text-align:center;
+    font-size:.76rem; color:#4a7c53; font-weight:700; min-height:16px;
+    line-height:1.4; overflow-wrap:break-word; word-wrap:break-word;
+  }
+
+  .cal-btn{
+    display:inline-flex; align-items:center; gap:6px; white-space:nowrap;
+    background:#fff; color:#8a6bb0; font-weight:700; font-size:.72rem;
+    padding:7px 16px; margin-top:8px; border:1.5px solid #e6d9ff; border-radius:999px; cursor:pointer;
+  }
+  .cal-btn:active{transform:scale(.96);}
+
+  /* zonas invisibles sobre la tarjeta-imagen: tocar los globos larga confeti, tocar el arcoíris suena una campanita,
+     tocar la dirección abre Google Maps */
+  .card-tap-zone{position:absolute; z-index:4; cursor:pointer;}
+  .tz-balloon-l{top:63%; left:0%; width:22%; height:16%;}
+  .tz-balloon-r{top:59%; right:0%; width:20%; height:16%;}
+  .tz-rainbow{top:0%; left:15%; width:70%; height:20%;}
+  .tz-place{top:67%; left:50%; width:38%; height:11%;}
+
+  /* pistita animada de que la dirección se puede tocar */
+  .ov-place-hint{
+    position:absolute; top:77.4%; left:52%; width:34%;
+    font-size:.52rem; font-weight:800; letter-spacing:.3px;
+    color:#4d8f77; text-align:center;
+    pointer-events:none;
+    animation:placeHintBounce 1.6s ease-in-out infinite;
+  }
+  @keyframes placeHintBounce{
+    0%,100%{transform:translateY(0); opacity:.65;}
+    50%{transform:translateY(-3px); opacity:1;}
+  }
+
+  .confetti-piece{
+    position:fixed; top:-10px; width:9px; height:9px; z-index:999;
+    border-radius:2px; animation:confettiFall linear forwards; pointer-events:none;
+    --drift:0px;
+  }
+  .confetti-piece.emoji{background:none !important; font-size:20px; width:auto; height:auto; line-height:1;}
+  @keyframes confettiFall{
+    0%{transform:translate(0,0) rotate(0deg); opacity:1;}
+    100%{transform:translate(var(--drift),110vh) rotate(540deg); opacity:.35;}
+  }
+
+  /* ============ MODAL DE CONFIRMACIÓN (interfaz propia, no un Google Form) ============ */
+  .rsvp-modal-backdrop{
+    position:fixed; inset:0; z-index:600;
+    background:rgba(70,35,55,.5);
+    display:none; align-items:center; justify-content:center;
+    padding:24px;
+  }
+  .rsvp-modal-backdrop.open{display:flex;}
+  .rsvp-modal{
+    position:relative;
+    width:100%; max-width:300px;
+    background:linear-gradient(160deg,#fff8f5 0%,#fff0f5 100%);
+    border:3px solid #ffd6e4;
+    border-radius:26px;
+    padding:30px 22px 24px;
+    text-align:center;
+    box-shadow:0 25px 60px rgba(0,0,0,.3);
+    animation:modalPop .4s cubic-bezier(.2,.8,.3,1.3);
+  }
+  @keyframes modalPop{from{opacity:0; transform:scale(.7) translateY(20px);} to{opacity:1; transform:scale(1) translateY(0);}}
+  .rsvp-modal-close{
+    position:absolute; top:10px; right:12px;
+    background:none; border:none; font-size:18px; color:#c1708a; cursor:pointer;
+    width:30px; height:30px; line-height:1;
+  }
+  .rsvp-modal-emoji{font-size:42px; margin-bottom:6px; animation:modalBounce 1.6s ease-in-out infinite;}
+  @keyframes modalBounce{0%,100%{transform:translateY(0) rotate(-4deg);} 50%{transform:translateY(-8px) rotate(4deg);}}
+  .rsvp-modal-title{font-family:'Dancing Script',cursive; font-weight:700; font-size:1.7rem; color:#ff6f9c; margin:0 0 4px;}
+  .rsvp-modal-sub{font-size:.8rem; color:#8a6a75; margin:0 0 16px;}
+  .rsvp-modal .rsvp-msg{margin-top:12px;}
+
+  @media (max-height:640px){
+    .photo-frame{width:min(58vw,240px); height:min(58vw,240px);}
+    .slide-caption h2{font-size:1.7rem;}
+    .count-number{font-size:clamp(4rem,22vw,6.5rem);}
+  }
+
+  /* botón de sonido, siempre visible y tocable a mano por si el autoplay falla en algún celular */
+  .sound-toggle-btn{
+    position:fixed; top:14px; right:14px; z-index:500;
+    width:40px; height:40px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.85); backdrop-filter:blur(4px);
+    box-shadow:0 4px 14px rgba(0,0,0,.18);
+    font-size:18px; line-height:1; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform .2s ease;
+  }
+  .sound-toggle-btn:active{transform:scale(.9);}
+  .sound-toggle-btn.is-on{ animation:soundBtnPulse 2.4s ease-in-out infinite; }
+  @keyframes soundBtnPulse{0%,100%{box-shadow:0 4px 14px rgba(0,0,0,.18);} 50%{box-shadow:0 4px 20px rgba(255,140,180,.55);}}
+  body.edit-mode .sound-toggle-btn{ top:64px; }
+
+  /* ============ EDIT MODE ============ */
+  .edit-toolbar{
+    position:fixed; top:0; left:0; right:0; z-index:3000;
+    background:#2f5233; color:#fff;
+    padding:10px 14px;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    font-size:.8rem;
+    box-shadow:0 4px 12px rgba(0,0,0,.2);
+  }
+  .edit-toolbar .hint{flex:1 1 220px;}
+  .edit-toolbar button{
+    background:#7fd48f; color:#1c3320; border:none; border-radius:8px;
+    padding:8px 14px; font-weight:700; cursor:pointer; font-size:.8rem;
+    white-space:nowrap;
+  }
+  .edit-toolbar button.secondary{background:transparent; color:#fff; border:1px solid rgba(255,255,255,.5);}
+
+  body.edit-mode #app{padding-top:54px; box-sizing:border-box;}
+  body.edit-mode [contenteditable="true"]{
+    outline:2px dashed #7fd48f;
+    outline-offset:3px;
+    border-radius:6px;
+    cursor:text;
+  }
+  body.edit-mode [contenteditable="true"]:hover{background:rgba(127,212,143,.1);}
+  body.edit-mode .photo-frame img{cursor:grab;}
+  body.edit-mode .photo-frame img:active{cursor:grabbing;}
+  body.edit-mode .photo-frame{outline:2px dashed #a8d8ea; outline-offset:4px;}
+
+  .zoom-controls{
+    position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+    display:none; gap:8px; z-index:20;
+  }
+  body.edit-mode .zoom-controls{display:flex;}
+  .zoom-controls button{
+    width:30px; height:30px; border-radius:50%; border:none;
+    background:rgba(0,0,0,.6); color:#fff; font-size:17px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    line-height:1;
+  }
+</style>
+</head>
+<body class="">
+
+<div id="app">
+
+  <audio id="bgMusic" loop="" preload="auto" autoplay="" muted="">
+    <source src="cancion.mp3" type="audio/mpeg">
+  </audio>
+
+  <iframe name="hiddenRsvpFrame" id="hiddenRsvpFrame" style="display:none;" title="envio rsvp"></iframe>
+
+  <!-- botón de sonido: respaldo visible por si el autoplay de música falla en algún celular -->
+  <button id="soundToggleBtn" class="sound-toggle-btn" type="button" aria-label="Activar o pausar la música">🔇</button>
+
+  <!-- aviso de girar el celular si lo detecta en horizontal -->
+  <div class="rotate-hint" id="rotateHint"><span class="ico">📱</span> Girá tu celular para verla mejor</div>
+
+  <div class="sparkle-layer" id="sparkleLayer"><span class="sparkle" style="left: 0.00896512vw; top: 52.593vh; font-size: 14.9745px; color: rgb(168, 216, 234); animation-delay: 2.57343s;">✦</span><span class="sparkle" style="left: 21.5053vw; top: 9.03611vh; font-size: 15.766px; color: rgb(240, 201, 138); animation-delay: 1.86927s;">✦</span><span class="sparkle" style="left: 39.5512vw; top: 53.0576vh; font-size: 16.2947px; color: rgb(201, 182, 240); animation-delay: 1.88935s;">♥</span><span class="sparkle" style="left: 12.1475vw; top: 97.2857vh; font-size: 19.2833px; color: rgb(240, 201, 138); animation-delay: 0.905198s;">⋆</span><span class="sparkle" style="left: 65.3646vw; top: 61.3591vh; font-size: 21.7202px; color: rgb(168, 216, 234); animation-delay: 0.727417s;">✦</span><span class="sparkle" style="left: 24.7896vw; top: 16.915vh; font-size: 18.6394px; color: rgb(143, 214, 174); animation-delay: 1.71339s;">✦</span><span class="sparkle" style="left: 24.6078vw; top: 66.0198vh; font-size: 23.0939px; color: rgb(240, 201, 138); animation-delay: 2.26024s;">✧</span><span class="sparkle" style="left: 29.242vw; top: 16.3892vh; font-size: 10.4144px; color: rgb(240, 201, 138); animation-delay: 2.1153s;">⋆</span><span class="sparkle" style="left: 80.3465vw; top: 57.3322vh; font-size: 21.1159px; color: rgb(240, 201, 138); animation-delay: 0.142264s;">⋆</span><span class="sparkle" style="left: 98.3147vw; top: 61.7733vh; font-size: 10.6196px; color: rgb(240, 201, 138); animation-delay: 0.708415s;">⋆</span><span class="sparkle" style="left: 16.2176vw; top: 40.2024vh; font-size: 11.6864px; color: rgb(255, 143, 177); animation-delay: 2.52462s;">✦</span><span class="sparkle" style="left: 33.7667vw; top: 43.6117vh; font-size: 16.2063px; color: rgb(168, 216, 234); animation-delay: 2.48656s;">✦</span><span class="sparkle" style="left: 16.068vw; top: 73.159vh; font-size: 18.7673px; color: rgb(201, 182, 240); animation-delay: 1.8643s;">⋆</span><span class="sparkle" style="left: 54.3779vw; top: 35.488vh; font-size: 14.6727px; color: rgb(168, 216, 234); animation-delay: 1.50298s;">⋆</span><span class="sparkle" style="left: 35.0763vw; top: 65.555vh; font-size: 21.371px; color: rgb(143, 214, 174); animation-delay: 0.826482s;">♥</span><span class="sparkle" style="left: 75.2752vw; top: 80.1551vh; font-size: 19.1037px; color: rgb(168, 216, 234); animation-delay: 1.64015s;">⋆</span><span class="sparkle" style="left: 43.8563vw; top: 79.3303vh; font-size: 15.9277px; color: rgb(168, 216, 234); animation-delay: 1.66303s;">♥</span><span class="sparkle" style="left: 23.157vw; top: 62.6209vh; font-size: 20.2791px; color: rgb(143, 214, 174); animation-delay: 2.32933s;">⋆</span><span class="sparkle" style="left: 71.0487vw; top: 85.7895vh; font-size: 16.0894px; color: rgb(255, 143, 177); animation-delay: 0.913396s;">⋆</span><span class="sparkle" style="left: 93.8303vw; top: 92.5203vh; font-size: 16.8102px; color: rgb(143, 214, 174); animation-delay: 1.55851s;">✦</span><span class="sparkle" style="left: 15.3416vw; top: 54.7335vh; font-size: 22.5382px; color: rgb(201, 182, 240); animation-delay: 2.16036s;">⋆</span><span class="sparkle" style="left: 8.50708vw; top: 66.8434vh; font-size: 22.5538px; color: rgb(168, 216, 234); animation-delay: 1.07377s;">⋆</span></div>
+
+  <!-- ============ PANTALLA DE INICIO: el toque acá dispara música + cuenta regresiva ============ -->
+  <div id="startGate">
+    <div class="start-gate-img-wrap">
+      <img class="start-gate-img" src="Intro.PNG" alt="¡Bienvenidos a la fiesta de Mariana! Tocá para comenzar">
+    </div>
+    <div class="start-gate-fx" id="startGateFx"></div>
+  </div>
+
+  <!-- ============ INTRO ============ -->
+  <div id="introScreen">
+    <div class="intro-rings">
+      <div class="ring ring1"></div>
+      <div class="ring ring2"></div>
+      <div class="ring ring3"></div>
+    </div>
+    <div class="intro-content">
+      <div class="count-number" id="countNumber">0</div>
+      <div class="count-label">DÍAS DE PURA MAGIA</div>
+      <div class="count-sub script" id="countSub" style="font-size:1.4rem;">Bienvenid@ a mi cumpleaños 🌈</div>
+    </div>
+  </div>
+
+  <!-- ============ RAINBOW WIPE ============ -->
+  <div class="rainbow-wipe" id="rainbowWipe"></div>
+
+  <!-- ============ STAGE (11 month slides + final card) ============ -->
+  <div id="stage" class="active">
+
+    <div class="slide active" data-i="0">
+      <span class="month-chip">Mes 0</span>
+      <div class="photo-frame"><img src="fotos-web/mes0.jpg" alt="Mariana mes 0" style="cursor: grab;" data-pan-x="0" data-pan-y="3" data-zoom="1.35"></div>
+      <div class="slide-caption"><h2>El día que llegó</h2><p>El comienzo de esta aventura: <br>Mariana llegó al mundo y todo se llenó de luz.</p></div>
+    </div>
+
+    <div class="slide" data-i="1">
+      <span class="month-chip">Mes 1</span>
+      <div class="photo-frame"><img src="fotos-web/mes1.jpg" alt="Mariana mes 1" data-pan-x="-3.95" data-pan-y="2.32" data-zoom="0.4" style="cursor: grab; transform: translate(-50%, -50%) translate(-3.95271%, 2.32143%) scale(0.4);"></div>
+      <div class="slide-caption"><h2>Nuestro pequeño sueño</h2><p>Llegaste a nuestras vidas y, sin saberlo, cumpliste el sueño más grande de papá y mamá. ❤️</p></div>
+    </div>
+
+    <div class="slide" data-i="2">
+      <span class="month-chip">Mes 2</span>
+      <div class="photo-frame"><img src="fotos-web/mes2.jpg" alt="Mariana mes 2" data-pan-x="0.76" data-pan-y="1.69" data-zoom="0.4" style="cursor: grab; transform: translate(-50%, -50%) translate(0.756828%, 1.69048%) scale(0.4);"></div>
+      <div class="slide-caption"><h2>Dos meses de amor</h2><p>Dos meses contigo, y ya llenaste <br>nuestro mundo de amor.</p></div>
+    </div>
+
+    <div class="slide" data-i="3">
+      <span class="month-chip">Mes 3</span>
+      <div class="photo-frame"><img src="fotos-web/mes3.jpg" alt="Mariana mes 3" data-pan-x="6.56" data-pan-y="11.79" data-zoom="0.5" style="cursor: grab; transform: translate(-50%, -50%) translate(6.56219%, 11.7857%) scale(0.5);"></div>
+      <div class="slide-caption"><h2>Nuestra primera Navidad</h2><p>Tu primera Navidad llegó, y con ella descubrimos que el mejor regalo ya estaba en nuestros brazos.</p></div>
+    </div>
+
+    <div class="slide" data-i="4">
+      <span class="month-chip">Mes 4</span>
+      <div class="photo-frame"><img src="fotos-web/mes4.jpg" alt="Mariana mes 4" data-pan-x="-1.47" data-pan-y="-0.07" data-zoom="0.4" style="cursor: grab; transform: translate(-50%, -50%) translate(-1.46915%, -0.0714286%) scale(0.4);"></div>
+      <div class="slide-caption"><h2>Curiosidad sin límites</h2><p>Cada sonido, cada color, cada objeto nuevo era una aventura para explorar.</p></div>
+    </div>
+
+    <div class="slide" data-i="5">
+      <span class="month-chip">Mes 5</span>
+      <div class="photo-frame"><img src="fotos-web/mes5.jpg" alt="Mariana mes 5" data-pan-x="0.48" data-pan-y="-6.5" data-zoom="0.4" style="cursor: grab; transform: translate(-50%, -50%) translate(0.476645%, -6.5%) scale(0.4);"></div>
+      <div class="slide-caption"><h2>Cinco meses de ternura</h2><p>En tus pequeños gestos descubrimos una personalidad que ya nos enamora, y cada día nos regalas una nueva razón para sonreír.</p></div>
+    </div>
+
+    <div class="slide" data-i="6">
+      <span class="month-chip">Mes 6</span>
+      <div class="photo-frame"><img src="fotos-web/mes6.jpg" alt="Mariana mes 6" data-zoom="0.4" data-pan-x="0.8" data-pan-y="-2.86" style="cursor: grab; transform: translate(-50%, -50%) translate(0.804721%, -2.85714%) scale(0.4);"></div>
+      <div class="slide-caption"><h2>Seis meses descubriendo</h2><p>Llegaron las primeras comiditas... ¡y las primeras caras chistosas al probarlas!</p></div>
+    </div>
+
+    <div class="slide" data-i="7">
+      <span class="month-chip">Mes 7</span>
+      <div class="photo-frame"><img src="fotos-web/mes7.jpg" alt="Mariana mes 7" data-zoom="0.4" data-pan-x="0.24" data-pan-y="1.43" style="cursor: grab; transform: translate(-50%, -50%) translate(0.23855%, 1.42857%) scale(0.4);"></div>
+      <div class="slide-caption"><h2>Siete meses sentadita</h2><p>Ya puedes sentarte solita, y nosotros no podemos sentirnos más orgullosos de verte crecer</p></div>
+    </div>
+
+    <div class="slide" data-i="8">
+      <span class="month-chip">Mes 8</span>
+      <div class="photo-frame"><img src="fotos-web/mes8.jpg" alt="Mariana mes 8" data-zoom="0.4" data-pan-x="0.32" data-pan-y="2.32" style="cursor: grab; transform: translate(-50%, -50%) translate(0.317662%, 2.32143%) scale(0.4);"></div>
+      <div class="slide-caption"><h2>Ocho meses compartiendo</h2><p>Paseos, amigos y familia… comenzaste a descubrir lo bonito de crecer rodeada de quienes te aman.</p></div>
+    </div>
+
+    <div class="slide" data-i="9">
+      <span class="month-chip">Mes 9</span>
+      <div class="photo-frame"><img src="fotos-web/mes9.jpg" alt="Mariana mes 9" data-zoom="0.4" data-pan-x="0.9" data-pan-y="5.36" style="cursor: grab; transform: translate(-50%, -50%) translate(0.89928%, 5.35714%) scale(0.4);"></div>
+      <div class="slide-caption"><h2>Nueve meses de ternura</h2><p>Llegaron tus primeros “ta, ta, ta”… y nuestros corazones se derritieron al escucharte.</p></div>
+    </div>
+
+    <div class="slide" data-i="10">
+      <span class="month-chip">Mes 10</span>
+      <div class="photo-frame"><img src="fotos-web/mes10.jpg" alt="Mariana mes 10" data-zoom="0.4" data-pan-x="0" data-pan-y="5.36" style="cursor: grab; transform: translate(-50%, -50%) translate(0%, 5.35714%) scale(0.4);"></div>
+      <div class="slide-caption"><h2>Casi lista para caminar</h2><p>Sus piernitas se preparaban para la aventura más grande: caminar sola.</p></div>
+    </div>
+
+    <!-- ============ SLIDE 11 = MES 12 = TARJETA FINAL ============ -->
+    <div class="slide card-slide" data-i="11">
+
+      <!-- nombre del invitado: vive arriba de la tarjeta, no adentro de ella -->
+      <div class="card-guest-banner" id="cardGuestBanner" style="display:none;">
+        <div class="card-guest-banner-inner" id="cardGuestBannerInner"></div>
+      </div>
+
+      <div class="envelope" id="cardEnvelope">
+        <div class="envelope-body">
+          <div class="envelope-flap"></div>
+          <div class="envelope-seal">💌</div>
+        </div>
+      </div>
+
+      <div class="invite-card">
+       <div class="card-inner" id="cardInner">
+        <img class="card-bg-img" src="IMG_1160.PNG" alt="Invitación cumpleaños Mariana">
+
+        <div class="card-cloud-layer">
+          <span class="card-cloud" style="top:2%; font-size:30px; opacity:.55; animation-duration:15s;">☁️</span>
+          <span class="card-cloud" style="top:9%; font-size:22px; opacity:.4; animation-duration:20s; animation-delay:-7s;">☁️</span>
+          <span class="card-cloud" style="top:5%; font-size:18px; opacity:.35; animation-duration:25s; animation-delay:-15s;">☁️</span>
+        </div>
+        <div class="card-paper-texture"></div>
+        <div class="card-night-tint" id="cardNightTint"></div>
+
+        <div class="card-gift-icon no-advance" onclick="openGiftMessage(event)">🎁</div>
+        <div class="card-reactions no-advance">
+          <button class="reaction-btn" data-reaction="party" type="button">🥳</button>
+          <button class="reaction-btn" data-reaction="heart" type="button">❤️</button>
+          <button class="reaction-btn" data-reaction="balloon" type="button">🎈</button>
+        </div>
+
+        <div class="card-overlay">
+          <div class="txt ov-eyebrow" id="ovEyebrow">Ven a celebrar conmigo</div>
+          <div class="txt ov-name no-advance" onclick="tapName(event)">Mariana</div>
+          <div class="txt ov-ribbon">¡Cumplo 1 añito!</div>
+          <p class="txt ov-desc">Prepárate para un día lleno de sonrisas, juegos y momentos inolvidables 🎪</p>
+          <div class="ov-countdown" id="ovCountdown"></div>
+
+          <div class="txt ov-date-num">12</div>
+          <div class="txt ov-date-sub">SEPTIEMBRE<br>2026</div>
+          <div class="txt ov-time">03:00pm</div>
+          <div class="txt ov-time-sub">HORA</div>
+          <div class="txt ov-place">Salón comunal<br>Veracruz</div>
+          <div class="txt ov-place-sub">Cra 101 # 39 - 25</div>
+          <div class="ov-place-hint">👆 tocá para ver mapa</div>
+
+          <div class="ov-confirm-wrap no-advance">
+            <div class="txt ov-confirm" id="ovConfirmLabel" style="position:static; left:auto; width:auto;">CONFIRMA TU ASISTENCIA</div>
+            <button class="ov-rsvp-btn" id="rsvpOpenBtn" onclick="openRsvpModal(event)">💌 Confirmar</button>
+            <div class="ov-confirm-divider"><span>o</span></div>
+            <button class="cal-btn no-advance" type="button" onclick="downloadICS(event)">📅 Agregar a mi calendario</button>
+            <br>
+            <button class="whatsapp-btn no-advance" id="whatsappShareBtn" type="button" onclick="shareWhatsApp(event)" style="display:none;">📲 Compartir por WhatsApp</button>
+          </div>
+
+          <!-- zonas táctiles invisibles: tocar los globos = confeti, tocar el arcoíris = campanita -->
+          <div class="card-tap-zone tz-balloon-l no-advance" onclick="tapBalloon(event,'left')"></div>
+          <div class="card-tap-zone tz-balloon-r no-advance" onclick="tapBalloon(event,'right')"></div>
+          <div class="card-tap-zone tz-rainbow no-advance" onclick="tapRainbow(event)"></div>
+          <div class="card-tap-zone tz-place no-advance" onclick="openMaps(event)"></div>
+        </div>
+       </div>
+      </div>
+    </div>
+
+    <div class="tap-hint" id="tapHint" style="display: block;">Tocá la pantalla para continuar →</div>
+    <div class="dots" id="dots"></div>
+    <div class="progress-track" id="progressTrack">
+      <div class="progress-track-wrap">
+        <div class="progress-track-inner"><div class="progress-fill" id="progressFill"></div></div>
+        <img class="progress-walker" id="progressWalker" src="nena-1.png" alt="">
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL DE CONFIRMACIÓN (fuera de #stage a propósito, para que no dispare el avance de slide) ============ -->
+  <div class="rsvp-modal-backdrop" id="rsvpModalBackdrop">
+    <div class="rsvp-modal">
+      <button class="rsvp-modal-close" id="rsvpModalClose" aria-label="Cerrar" type="button">✕</button>
+      <div class="rsvp-modal-emoji">🎉</div>
+      <h3 class="rsvp-modal-title">¡Confirmá tu asistencia!</h3>
+      <p class="rsvp-modal-sub" id="rsvpSub">Escribí tu nombre para anotarte en la lista</p>
+      <input type="text" id="rsvpName" class="rsvp-input" placeholder="Tu nombre completo">
+      <div class="rsvp-locked-name" id="rsvpLockedName" style="display:none;"></div>
+      <button class="ov-rsvp-btn" id="rsvpSubmitBtn" onclick="confirmar(event)" type="button">💌 Confirmar</button>
+      <div class="rsvp-msg" id="rsvpMsg"></div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL DEL REGALO SORPRESA ============ -->
+  <div class="gift-modal-backdrop" id="giftModalBackdrop">
+    <div class="gift-modal">
+      <button class="gift-modal-close" id="giftModalClose" aria-label="Cerrar" type="button">✕</button>
+      <div class="gift-modal-emoji">🎁</div>
+      <p class="gift-modal-msg" id="giftModalMsg"></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ---------------- edit mode detection (must run early) ---------------- */
+const isEditMode = new URLSearchParams(location.search).get('editar') === '1';
+if(isEditMode){ document.body.classList.add('edit-mode'); }
+
+/* ---------------- borrar el recuerdo local de "ya confirmé" (para pruebas): abrir con ?resetrsvp=1 ---------------- */
+if(new URLSearchParams(location.search).get('resetrsvp') === '1'){
+  localStorage.removeItem('rsvpNames');
+}
+
+/* ---------------- invitación personalizada: cada invitado abre su propio link con ?n=Su+Nombre ----------------
+   Si el link trae el nombre, no se puede escribir otro — así nadie anota a alguien que no fue invitado.
+   Si el link NO trae nombre (por ejemplo, mientras estás probando el sitio), se usa el campo de texto normal. */
+const GUEST_NAME = (new URLSearchParams(location.search).get('n') || '').trim();
+
+/* género opcional del invitado, para saludar bien sin adivinar por el nombre (que no es confiable:
+   nombres compuestos, ambiguos, etc). Se agrega al link con &g=m o &g=f — si no se pone, se usa
+   "Bienvenid@" que sirve para cualquiera. */
+const GUEST_GENDER = (new URLSearchParams(location.search).get('g') || '').trim().toLowerCase();
+function bienvenidaWord(){
+  if(GUEST_GENDER === 'm' || GUEST_GENDER === 'masculino') return 'Bienvenido';
+  if(GUEST_GENDER === 'f' || GUEST_GENDER === 'femenino') return 'Bienvenida';
+  return 'Bienvenid@';
+}
+
+/* ---------------- sparkle background: flotan hacia arriba todo el tiempo (no solo parpadean quietas) ---------------- */
+(function(){
+  const layer = document.getElementById('sparkleLayer');
+  const icons = ['✦','✧','♥','⋆'];
+  const colors = ['#ff8fb1','#c9b6f0','#8fd6ae','#a8d8ea','#f0c98a'];
+  for(let i=0;i<26;i++){
+    const s = document.createElement('span');
+    s.className='sparkle';
+    s.style.left = Math.random()*100+'vw';
+    s.style.top = (30+Math.random()*90)+'vh'; // arrancan bien abajo para tener recorrido antes de salir de pantalla
+    s.style.animation = 'driftUp ' + (14+Math.random()*16) + 's linear infinite';
+    s.style.animationDelay = (Math.random()*-20) + 's'; // arrancan desfasadas, no todas juntas
+    const inner = document.createElement('span');
+    inner.className = 'sparkle-inner';
+    inner.textContent = icons[Math.floor(Math.random()*icons.length)];
+    inner.style.fontSize = (10+Math.random()*14)+'px';
+    inner.style.color = colors[Math.floor(Math.random()*colors.length)];
+    inner.style.animationDelay = (Math.random()*2.6)+'s';
+    s.appendChild(inner);
+    layer.appendChild(s);
+  }
+})();
+
+/* ---------------- chispas y pétalos sobre la pantalla de inicio, para que se vea animada antes de tocarla ---------------- */
+(function(){
+  const fx = document.getElementById('startGateFx');
+  if(!fx) return;
+  const sparkleIcons = ['✦','✧','⋆','★'];
+  const sparkleColors = ['#ff8fb1','#ffd27a','#c9b6f0','#8fd6ae','#a8d8ea'];
+  for(let i=0;i<18;i++){
+    const s = document.createElement('span');
+    s.className = 'startgate-fx-sparkle';
+    s.textContent = sparkleIcons[Math.floor(Math.random()*sparkleIcons.length)];
+    s.style.left = Math.random()*100 + '%';
+    s.style.top = Math.random()*100 + '%';
+    s.style.fontSize = (10+Math.random()*14) + 'px';
+    s.style.color = sparkleColors[Math.floor(Math.random()*sparkleColors.length)];
+    s.style.animationDuration = (1.6+Math.random()*1.8) + 's';
+    s.style.animationDelay = (Math.random()*2) + 's';
+    fx.appendChild(s);
+  }
+  const petals = ['🌸','🌺'];
+  for(let i=0;i<7;i++){
+    const p = document.createElement('span');
+    p.className = 'startgate-fx-petal';
+    p.textContent = petals[Math.floor(Math.random()*petals.length)];
+    p.style.left = Math.random()*100 + '%';
+    p.style.fontSize = (16+Math.random()*10) + 'px';
+    p.style.animationDuration = (7+Math.random()*6) + 's';
+    p.style.animationDelay = (Math.random()*-10) + 's';
+    fx.appendChild(p);
+  }
+})();
+
+/* ---------------- background music: arranca justo cuando el contador llega a 365 ---------------- */
+const bgMusic = document.getElementById('bgMusic');
+bgMusic.loop = true; // por si el atributo loop del HTML no alcanza en algún navegador
+function tryPlayMusic(){
+  bgMusic.play().catch(()=>{});
+}
+tryPlayMusic(); // reproduce muted desde el inicio (necesario para que el navegador permita el autoplay)
+
+// respaldo #1: si por algún motivo el navegador no repite sola la canción al terminar, la reinicia a mano
+bgMusic.addEventListener('ended', function(){
+  bgMusic.currentTime = 0;
+  tryPlayMusic();
+});
+
+// respaldo #2: si el navegador pausa el audio de fondo (celular bloqueado, cambio de app, etc.)
+// la vuelve a poner en cuanto la persona vuelve a mirar la pantalla
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'visible' && musicStarted && bgMusic.paused){
+    tryPlayMusic();
+  }
+});
+
+let musicStarted = false;
+function startMusic(){
+  if(musicStarted) return;
+  musicStarted = true;
+  bgMusic.muted = false;
+  bgMusic.play().catch(()=>{
+    // algunos celulares (sobre todo iPhone) rechazan el primer intento y necesitan
+    // que se recargue el audio antes de reintentar dentro del mismo toque
+    bgMusic.load();
+    bgMusic.muted = false;
+    bgMusic.play().catch(()=>{});
+  });
+  updateSoundBtn();
+}
+
+/* ---------------- botón de sonido manual: respaldo garantizado por si el autoplay no funciona en algún celular ---------------- */
+const soundBtn = document.getElementById('soundToggleBtn');
+function updateSoundBtn(){
+  if(!soundBtn) return;
+  const on = musicStarted && !bgMusic.paused && !bgMusic.muted;
+  soundBtn.textContent = on ? '🔊' : '🔇';
+  soundBtn.classList.toggle('is-on', on);
+}
+if(soundBtn){
+  soundBtn.addEventListener('click', (e)=>{
+    e.stopPropagation();
+    vibrate(10);
+    if(!musicStarted){
+      startMusic();
+    } else if(bgMusic.paused){
+      bgMusic.muted = false;
+      bgMusic.play().catch(()=>{});
+    } else {
+      bgMusic.pause();
+    }
+    setTimeout(updateSoundBtn, 150);
+  });
+  bgMusic.addEventListener('play', updateSoundBtn);
+  bgMusic.addEventListener('pause', updateSoundBtn);
+}
+// respaldo #3: si el navegador bloquea el sonido programático, se activa con el primer toque/click/tecla
+document.addEventListener('click', startMusic, {once:true});
+document.addEventListener('touchstart', startMusic, {once:true});
+document.addEventListener('keydown', startMusic, {once:true});
+
+// en modo edición no hay conteo de 365 (se salta la intro), así que arranca directo
+if(isEditMode){ startMusic(); }
+
+/* ---------------- photo framing (siempre activo, edición y vista final) ---------------- */
+// Cada foto guarda su encuadre (paneo y zoom) en atributos data-* del propio <img>,
+// así queda guardado dentro del HTML cuando se descargan los cambios en modo edición.
+function setupPhotoFrame(frame){
+  const img = frame.querySelector('img');
+  if(!img) return;
+
+  const state = {
+    panX: parseFloat(img.dataset.panX) || 0,
+    panY: parseFloat(img.dataset.panY) || 0,
+    zoom: parseFloat(img.dataset.zoom) || 1
+  };
+  let baseScale = 1;
+
+  function computeBase(){
+    const fw = frame.clientWidth, fh = frame.clientHeight;
+    const nw = img.naturalWidth, nh = img.naturalHeight;
+    if(!fw || !fh || !nw || !nh) return;
+    baseScale = Math.max(fw / nw, fh / nh);
+    img.style.width = nw + 'px';
+    img.style.height = nh + 'px';
+    applyTransform();
+    frame.classList.add('ph-loaded'); // ya está lista: se apaga el latido y la foto se funde in
+  }
+  function applyTransform(){
+    img.style.transform =
+      'translate(-50%,-50%) translate(' + state.panX + '%, ' + state.panY + '%) ' +
+      'scale(' + (baseScale * state.zoom) + ')';
+  }
+  function savePan(){
+    img.dataset.panX = Math.round(state.panX * 100) / 100;
+    img.dataset.panY = Math.round(state.panY * 100) / 100;
+  }
+
+  if(img.complete && img.naturalWidth){ computeBase(); }
+  else { img.addEventListener('load', computeBase); }
+  window.addEventListener('resize', computeBase);
+
+  img._photoState = state;
+  img._applyTransform = applyTransform;
+  img._savePan = savePan;
+}
+document.querySelectorAll('.photo-frame').forEach(setupPhotoFrame);
+
+/* precarga TODAS las fotos de los meses apenas arranca la página, para que cuando se
+   vaya pasando de una a otra ya estén en caché y no se vea el hueco/salto de carga */
+(function preloadAllPhotos(){
+  document.querySelectorAll('.photo-frame img').forEach(img => {
+    if(img.src){ const pre = new Image(); pre.src = img.src; }
+  });
+})();
+
+/* nena caminando sobre la barra de progreso: precarga los 12 fotogramas reales y va rotando
+   entre ellos mientras el CSS la mueve de un lado a otro de la barra, simulando el paso */
+(function setupWalkerSprite(){
+  const walker = document.getElementById('progressWalker');
+  if(!walker) return;
+  const FRAME_COUNT = 12;
+  for(let i=1;i<=FRAME_COUNT;i++){ new Image().src = 'nena-' + i + '.png'; } // precarga, evita parpadeo
+  let frame = 1;
+  setInterval(()=>{
+    frame = (frame % FRAME_COUNT) + 1;
+    walker.src = 'nena-' + frame + '.png';
+  }, 90);
+})();
+
+/* ---------------- intro day counter ---------------- */
+const countEl = document.getElementById('countNumber');
+const introEl = document.getElementById('introScreen');
+const TARGET_DAYS = 365;
+
+if(GUEST_NAME){
+  const countSubEl = document.getElementById('countSub');
+  if(countSubEl) countSubEl.textContent = bienvenidaWord() + ' a mi cumpleaños, ' + GUEST_NAME + ' 🌈';
+
+  // el nombre del invitado ahora vive en un banner propio arriba de la tarjeta final,
+  // no adentro del texto de la tarjeta (así "Ven a celebrar conmigo" y el nombre de Mariana quedan limpios)
+  const guestBanner = document.getElementById('cardGuestBanner');
+  const guestBannerInner = document.getElementById('cardGuestBannerInner');
+  if(guestBanner && guestBannerInner){
+    guestBannerInner.textContent = '💌 ' + GUEST_NAME;
+    guestBanner.style.display = 'flex';
+  }
+}
+
+function runCountdown(){
+  const duration = 4200; // más lenta, para poder seguir los números
+  const start = performance.now();
+  function step(now){
+    const t = Math.min(1, (now-start)/duration);
+    const eased = 1 - Math.pow(1-t, 3);
+    countEl.textContent = Math.round(eased*TARGET_DAYS);
+    if(t < 1){
+      requestAnimationFrame(step);
+    } else {
+      countEl.textContent = TARGET_DAYS;
+      startMusic(); // la canción arranca justo cuando el contador llega a 365
+      setTimeout(finishIntro, 1200);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+function finishIntro(){
+  introEl.classList.add('exit');
+  setTimeout(()=>{
+    introEl.style.display='none';
+    document.getElementById('stage').classList.add('active');
+    showSlide(0, false);
+  }, 550);
+}
+
+const startGate = document.getElementById('startGate');
+
+/* estrellitas repartidas por toda la imagen de inicio, como si se deshiciera en partículas */
+function burstStartGateStars(rect){
+  const icons = ['✦','✧','⋆','★','✨'];
+  const colors = ['#ff8fb1','#ffcf8a','#c9b6f0','#8fd6ae','#a8d8ea','#fff'];
+  // muchas más chispitas, repartidas también un poco más allá del borde de la imagen,
+  // para que se sienta tan intenso como el cruce del puente de luz entre meses
+  for(let i=0;i<90;i++){
+    const s = document.createElement('span');
+    s.className = 'startgate-star';
+    s.textContent = icons[Math.floor(Math.random()*icons.length)];
+    s.style.left = (rect.left - 20 + Math.random()*(rect.width+40)) + 'px';
+    s.style.top = (rect.top - 20 + Math.random()*(rect.height+40)) + 'px';
+    s.style.fontSize = (11 + Math.random()*18) + 'px';
+    s.style.color = colors[Math.floor(Math.random()*colors.length)];
+    const angle = Math.random()*Math.PI*2;
+    const dist = 50 + Math.random()*190;
+    s.style.setProperty('--sx', Math.cos(angle)*dist + 'px');
+    s.style.setProperty('--sy', Math.sin(angle)*dist + 'px');
+    s.style.animationDelay = (Math.random()*0.35) + 's';
+    document.body.appendChild(s);
+    setTimeout(()=> s.remove(), 1500);
+  }
+}
+
+function beginExperience(e){
+  if(e) e.preventDefault();
+  startGate.removeEventListener('click', beginExperience);
+  startGate.removeEventListener('touchend', beginExperience);
+  startMusic(); // este SÍ es un toque real del usuario: acá el navegador permite sonido con volumen
+  const gateImg = startGate.querySelector('.start-gate-img');
+  if(gateImg) burstStartGateStars(gateImg.getBoundingClientRect());
+  startGate.classList.add('exit');
+  setTimeout(()=>{ startGate.style.display = 'none'; }, 620);
+  setTimeout(runCountdown, 200);
+}
+
+if(isEditMode){
+  // saltar intro y pantalla de inicio en modo edición para iterar más rápido
+  startGate.style.display = 'none';
+  introEl.style.display='none';
+  document.getElementById('stage').classList.add('active');
+} else {
+  // la música arranca en el instante mismo del primer contacto del dedo (pointerdown),
+  // que es más rápido que esperar al click/touchend — así suena apenas tocan la pantalla
+  startGate.addEventListener('pointerdown', startMusic, {once:true});
+  startGate.addEventListener('click', beginExperience);
+  startGate.addEventListener('touchend', beginExperience, {passive:false});
+}
+
+/* ---------------- slide navigation ---------------- */
+const slides = Array.from(document.querySelectorAll('.slide'));
+const totalSlides = slides.length; // 12 (0..10 months + 11 final card)
+
+/* fondo vivo: arcoíris real, estrellas, nubes con profundidad, globos y feria — con timing/posición
+   levemente distintos en cada slide para que no se sienta repetitivo */
+(function setupSlideDecos(){
+  // viewBox más alto y arcos que tocan los dos bordes (x=0 / x=400) a la altura y=250:
+  // el puente ya no queda como una tira arriba, ocupa buena parte del alto de la pantalla
+  const RAINBOW_SVG =
+    '<svg class="deco-rainbow-arc" viewBox="0 0 400 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">' +
+      '<defs>' +
+        '<filter id="bifrostGlow" x="-60%" y="-60%" width="220%" height="220%">' +
+          '<feGaussianBlur stdDeviation="6" result="blur"/>' +
+          '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>' +
+        '</filter>' +
+      '</defs>' +
+      '<g filter="url(#bifrostGlow)">' +
+        '<path d="M 0 250 A 220 220 0 0 1 400 250" fill="none" stroke="#ff6f9c" stroke-width="16" stroke-linecap="round"/>' +
+        '<path d="M 25 250 A 197 197 0 0 1 375 250" fill="none" stroke="#ff9f5a" stroke-width="16" stroke-linecap="round"/>' +
+        '<path d="M 50 250 A 174 174 0 0 1 350 250" fill="none" stroke="#ffe066" stroke-width="16" stroke-linecap="round"/>' +
+        '<path d="M 75 250 A 151 151 0 0 1 325 250" fill="none" stroke="#7fe0a0" stroke-width="16" stroke-linecap="round"/>' +
+        '<path d="M 100 250 A 128 128 0 0 1 300 250" fill="none" stroke="#5fc9f0" stroke-width="16" stroke-linecap="round"/>' +
+        '<path d="M 125 250 A 105 105 0 0 1 275 250" fill="none" stroke="#b78af0" stroke-width="16" stroke-linecap="round"/>' +
+      '</g>' +
+      '<circle r="5" fill="#fff"><animateMotion dur="3.6s" repeatCount="indefinite" path="M 0 250 A 220 220 0 0 1 400 250"/></circle>' +
+      '<circle r="4" fill="#fff" opacity=".85"><animateMotion dur="4.8s" repeatCount="indefinite" begin="-1.4s" path="M 50 250 A 174 174 0 0 1 350 250"/></circle>' +
+      '<circle r="3.4" fill="#fff" opacity=".7"><animateMotion dur="5.6s" repeatCount="indefinite" begin="-3s" path="M 100 250 A 128 128 0 0 1 300 250"/></circle>' +
+    '</svg>';
+  const STAR_ICONS = ['⋆','✦','✧','★'];
+  const STAR_COLORS = ['#e3b878','#ff8fb1','#c9b6f0','#8fd6ae','#a8d8ea'];
+  const BALLOON_EMOJI = ['🎈','💗','💜','🩵'];
+
+  // 3 capas de profundidad con reglas fijas (no todo al azar): lejos = quieto y chico,
+  // medio = nubes lentas, cerca = feria grande y más rápida. Solo la POSICIÓN varía un poco por slide.
+  const DEPTH = {
+    far:  { size:[9,16],  opacity:[.18,.35], dur:[2,4] },      // estrellas
+    mid:  { size:[26,42], opacity:[.2,.32],  dur:[32,46] },    // nubes lejanas
+    near: { size:[42,58], opacity:[.38,.5],  dur:[16,24] },    // nube cercana + feria
+  };
+  const jitter = (range) => range[0] + Math.random()*(range[1]-range[0]);
+
+  slides.forEach((slide, slideIdx) => {
+    if(slide.classList.contains('card-slide')) return; // la tarjeta final ya tiene su propio fondo
+    const deco = document.createElement('div');
+    deco.className = 'slide-deco';
+    const r = () => Math.random();
+    // lavado de color de fondo, cubre todo el slide (no solo la franja de arriba)
+    let html = '<div class="deco-aurora-wash" style="animation-delay:-' + (slideIdx*3) + 's;"></div>';
+    html += '<div class="deco-bifrost-flare" style="animation-delay:-' + (slideIdx*1.3) + 's;"></div>';
+    html += RAINBOW_SVG;
+
+    // CAPA LEJOS: estrellitas titilando por toda la escena, chicas y suaves
+    for(let i=0;i<7;i++){
+      html += '<span class="deco-star" style="top:'+(3+r()*55)+'%; left:'+(2+r()*96)+'%; font-size:'+jitter(DEPTH.far.size)+'px; color:'+STAR_COLORS[Math.floor(r()*STAR_COLORS.length)]+'; animation-duration:'+jitter(DEPTH.far.dur)+'s; animation-delay:-'+(r()*3)+'s;">'+STAR_ICONS[Math.floor(r()*STAR_ICONS.length)]+'</span>';
+    }
+
+    // CAPA MEDIO: 2 nubes lentas y tenues, arriba de la escena
+    for(let i=0;i<2;i++){
+      html += '<span class="deco-cloud-drift" style="top:'+(4+r()*18)+'%; font-size:'+jitter(DEPTH.mid.size)+'px; opacity:'+jitter(DEPTH.mid.opacity)+'; animation-duration:'+jitter(DEPTH.mid.dur)+'s; animation-delay:-'+(r()*30)+'s;">☁️</span>';
+    }
+
+    // CAPA CERCA: 1 nube grande más rápida (da la sensación de profundidad frente a las de arriba)
+    html += '<span class="deco-cloud-drift" style="top:'+(20+r()*10)+'%; font-size:'+jitter(DEPTH.near.size)+'px; opacity:'+jitter(DEPTH.near.opacity)+'; animation-duration:'+jitter(DEPTH.near.dur)+'s; animation-delay:-'+(r()*20)+'s;">☁️</span>';
+
+    // CAPA CERCA: globos de colores, abajo, con vaivén — mismo tamaño/opacidad "cerca" que la feria
+    for(let i=0;i<4;i++){
+      const side = i%2===0 ? 'left' : 'right';
+      html += '<span class="deco-balloon-drift" style="'+side+':'+(2+r()*14)+'%; bottom:'+(4+r()*20)+'%; font-size:'+jitter([22,34])+'px; opacity:'+jitter(DEPTH.near.opacity)+'; animation-duration:'+(3+r()*2)+'s; animation-delay:-'+(r()*3)+'s;">'+BALLOON_EMOJI[Math.floor(r()*BALLOON_EMOJI.length)]+'</span>';
+    }
+
+    // CAPA CERCA: caballito y rueda de la fortuna, más arriba — la parte de abajo queda libre
+    // para la nena que camina sobre la barra de progreso, que ahora es la protagonista de esa zona
+    html += '<span class="deco-carousel" style="bottom:'+(40+r()*10)+'%; font-size:'+jitter(DEPTH.near.size)+'px; opacity:'+jitter(DEPTH.near.opacity)+'; animation-duration:'+jitter(DEPTH.near.dur)+'s; animation-delay:-'+(r()*20)+'s;">🎠</span>';
+    html += '<span class="deco-carousel" style="bottom:'+(56+r()*8)+'%; font-size:'+jitter(DEPTH.mid.size)+'px; opacity:'+jitter(DEPTH.mid.opacity)+'; animation-duration:'+jitter([40,52])+'s; animation-delay:-'+(r()*30)+'s;">🎡</span>';
+
+    deco.innerHTML = html;
+    slide.insertBefore(deco, slide.firstChild);
+
+    // cada mes con un matiz levemente distinto del arco/flare/lavado, para que la experiencia
+    // no se sienta idéntica página tras página, aunque la estructura sea la misma
+    const hue = (slideIdx * 41) % 360;
+    const arcEl = deco.querySelector('.deco-rainbow-arc');
+    const flareEl = deco.querySelector('.deco-bifrost-flare');
+    const washEl = deco.querySelector('.deco-aurora-wash');
+    if(arcEl) arcEl.style.filter = 'hue-rotate(' + hue + 'deg)';
+    if(flareEl) flareEl.style.filter = 'hue-rotate(' + hue + 'deg)';
+    if(washEl) washEl.style.filter = 'blur(30px) hue-rotate(' + hue + 'deg)';
+  });
+})();
+let current = 0;
+let autoTimer = null;
+const AUTO_MS = 9500; // más tiempo para poder leer el texto de cada mes antes de pasar solo
+const wipeEl = document.getElementById('rainbowWipe');
+const dotsWrap = document.getElementById('dots');
+const tapHint = document.getElementById('tapHint');
+const progressTrack = document.getElementById('progressTrack');
+const progressFill = document.getElementById('progressFill');
+const stageEl = document.getElementById('stage');
+
+function vibrate(ms){
+  if(navigator.vibrate){ try{ navigator.vibrate(ms); }catch(err){} }
+}
+
+function updateDots(){
+  progressFill.style.width = ((current+1)/totalSlides*100) + '%';
+}
+
+const MONTH_ICONS = ['👶','🍼','🎀','🎄','🧸','😊','🥄','🪑','🚶','💬','🐣'];
+function updateMonthSticker(idx){
+  document.querySelectorAll('.month-sticker').forEach(el => el.remove());
+  if(idx < 0 || idx >= MONTH_ICONS.length) return;
+  const sticker = document.createElement('div');
+  sticker.className = 'month-sticker';
+  sticker.textContent = MONTH_ICONS[idx];
+  slides[idx].appendChild(sticker);
+  void sticker.offsetWidth; // fuerza reflow para poder reiniciar la animación cada vez
+  sticker.classList.add('fly');
+}
+
+function showSlide(idx, animate){
+  slides.forEach(s => s.classList.remove('active','entering'));
+  const target = slides[idx];
+  target.classList.add('active');
+  if(animate){
+    target.classList.add('entering');
+    target.addEventListener('animationend', function handler(){
+      target.classList.remove('entering');
+      target.removeEventListener('animationend', handler);
+    });
+  }
+  current = idx;
+  updateDots();
+  updateMonthSticker(idx);
+  const isLast = (idx === totalSlides-1);
+  tapHint.style.display = isLast ? 'none' : 'block';
+  progressTrack.style.display = isLast ? 'none' : 'flex';
+  resetAutoTimer();
+  if(isLast && animate) setTimeout(()=>{ burstPinata(55); }, 350);
+  if(isLast){
+    startCountdownTimer();
+    updateCardNightTint();
+    checkAlreadyConfirmed();
+    if(animate) setTimeout(playChime, 900); // campanita justo cuando termina de abrirse el sobre
+  } else {
+    stopCountdownTimer();
+  }
+}
+
+function resetAutoTimer(){
+  clearTimeout(autoTimer);
+  if(document.body.classList.contains('edit-mode')) return; // no avanzar solo mientras se edita
+  if(current < totalSlides-1){
+    autoTimer = setTimeout(nextSlide, AUTO_MS);
+  }
+}
+
+/* suelta chispitas de luz repartidas por la pantalla mientras dura el cruce del puente */
+function spawnWipeSparkles(){
+  const icons = ['✦','✧','⋆','★'];
+  const colors = ['#ffffff','#ffe9f2','#fff5d9','#e9f9ff','#f3e9ff'];
+  for(let i=0;i<14;i++){
+    const s = document.createElement('span');
+    s.className = 'wipe-sparkle';
+    s.textContent = icons[Math.floor(Math.random()*icons.length)];
+    s.style.left = (Math.random()*100) + 'vw';
+    s.style.top = (Math.random()*100) + 'vh';
+    s.style.fontSize = (10 + Math.random()*14) + 'px';
+    s.style.color = colors[Math.floor(Math.random()*colors.length)];
+    s.style.animationDelay = (Math.random()*0.9) + 's';
+    document.body.appendChild(s);
+    setTimeout(()=> s.remove(), 1900);
+  }
+}
+
+function nextSlide(){
+  if(current >= totalSlides-1) return;
+  const next = current+1;
+  vibrate(12);
+  wipeEl.classList.remove('animate');
+  void wipeEl.offsetWidth;
+  wipeEl.classList.add('animate');
+  spawnWipeSparkles();
+  setTimeout(()=>{ showSlide(next, true); }, 840);
+  setTimeout(()=>{ wipeEl.classList.remove('animate'); }, 1700);
+}
+
+function prevSlide(){
+  if(current <= 0) return;
+  const prev = current-1;
+  vibrate(12);
+  wipeEl.classList.remove('animate');
+  void wipeEl.offsetWidth;
+  wipeEl.classList.add('animate');
+  spawnWipeSparkles();
+  setTimeout(()=>{ showSlide(prev, true); }, 840);
+  setTimeout(()=>{ wipeEl.classList.remove('animate'); }, 1700);
+}
+
+document.getElementById('stage').addEventListener('click', (e)=>{
+  if(swipeJustFired){ swipeJustFired = false; return; }
+  if(e.target.closest('.no-advance')) return;
+  nextSlide();
+});
+
+/* ---------------- swipe con el dedo (arrastrar para pasar de mes) ---------------- */
+let swipeStartX = null, swipeStartY = null, swipeJustFired = false;
+stageEl.addEventListener('pointerdown', (e)=>{
+  if(document.body.classList.contains('edit-mode')) return;
+  if(e.target.closest('.no-advance')) return;
+  swipeStartX = e.clientX;
+  swipeStartY = e.clientY;
+}, {passive:true});
+stageEl.addEventListener('pointerup', (e)=>{
+  if(swipeStartX === null) return;
+  const dx = e.clientX - swipeStartX;
+  const dy = e.clientY - swipeStartY;
+  swipeStartX = null;
+  if(Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)*1.4){
+    swipeJustFired = true;
+    if(dx < 0) nextSlide(); else prevSlide();
+  }
+}, {passive:true});
+
+/* ---------------- RSVP: interfaz propia (modal) — guardado por Google Form (confiable) + chequeo de duplicados por Apps Script ----------------
+   El invitado NUNCA ve Google Forms/Sheets: solo ve este modal con tu diseño.
+
+   Por qué dos sistemas en vez de uno:
+   - El Google Form (con iframe oculto) es el que YA CONFIRMASTE que funciona para guardar datos.
+   - Pero el Form solo sabe "escribir", nunca "leer" — no puede avisar si un nombre ya existe.
+   - Para eso el Apps Script hace una consulta simple (de solo lectura) a la hoja antes de guardar.
+
+   PASOS para actualizar el Apps Script (usa la misma URL que ya tenés, solo cambia el código adentro):
+   1. Abrí tu Google Sheet (la de las respuestas) → Extensiones → Apps Script.
+   2. Borrá todo el código y pegá el que te paso en el chat (la función doGet).
+   3. Guardalo, después Implementar → Administrar implementaciones → lápiz ✏️ → Versión: Nueva versión → Implementar.
+      (la URL sigue siendo la misma, no hace falta pasarme una nueva)
+*/
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyEgFHcAx1r4TOLZu53TqsHi7I_9xzfTKKW0CN_IVP_vg5a6rihbPJN5zKPe_aiHjlV/exec';
+const GOOGLE_FORM_ACTION = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSdI3PB0ol9KNo47SM9DmyckJgn3iebx-UYGoUE1WupuytiLjg/formResponse';
+const GOOGLE_FORM_NAME_ENTRY = 'entry.1075140291';
+
+const rsvpBackdrop = document.getElementById('rsvpModalBackdrop');
+
+function openRsvpModal(e){
+  e.stopPropagation();
+  const msg = document.getElementById('rsvpMsg');
+  const nameInput = document.getElementById('rsvpName');
+  const lockedName = document.getElementById('rsvpLockedName');
+  const sub = document.getElementById('rsvpSub');
+  msg.textContent = '';
+  const btn = document.getElementById('rsvpSubmitBtn');
+  btn.style.display = 'inline-flex';
+  btn.disabled = false;
+  btn.textContent = '💌 Confirmar';
+  rsvpBackdrop.classList.add('open');
+
+  if(GUEST_NAME){
+    // link personalizado: no se puede escribir otro nombre
+    nameInput.style.display = 'none';
+    lockedName.style.display = 'block';
+    lockedName.textContent = GUEST_NAME;
+    sub.textContent = '¿Confirmás tu asistencia?';
+  } else {
+    nameInput.style.display = 'block';
+    lockedName.style.display = 'none';
+    sub.textContent = 'Escribí tu nombre para anotarte en la lista';
+    nameInput.value = '';
+    nameInput.disabled = false;
+    setTimeout(()=> nameInput.focus(), 200);
+  }
+}
+
+function closeRsvpModal(e){
+  if(e) e.stopPropagation();
+  rsvpBackdrop.classList.remove('open');
+}
+
+document.getElementById('rsvpModalClose').addEventListener('click', closeRsvpModal);
+rsvpBackdrop.addEventListener('click', (e)=>{
+  if(e.target === rsvpBackdrop) closeRsvpModal(e);
+});
+
+async function confirmar(e){
+  e.stopPropagation();
+  const nameInput = document.getElementById('rsvpName');
+  const msg = document.getElementById('rsvpMsg');
+  const btn = document.getElementById('rsvpSubmitBtn');
+  // si el link viene con nombre (invitación personalizada), se usa ESE nombre siempre —
+  // no se puede escribir ni cambiar por otro
+  const name = GUEST_NAME || (nameInput.value || '').trim();
+
+  if(!name){
+    msg.style.color = '#c1546e';
+    msg.textContent = 'Escribí tu nombre para confirmar 🙂';
+    return;
+  }
+
+  // aviso rápido en este mismo celular, sin esperar la red, por si ya se registró desde acá
+  const savedNames = JSON.parse(localStorage.getItem('rsvpNames') || '[]');
+  if(savedNames.includes(name.toLowerCase())){
+    msg.style.color = '#c1546e';
+    msg.textContent = 'Ya estás registrado, ' + name + ' 👀';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Revisando...';
+  msg.style.color = '#8a6a75';
+  msg.textContent = '';
+
+  // 1) preguntamos (de solo lectura) si el nombre ya está en la planilla
+  const alreadyExists = await checkDuplicate(name);
+
+  if(alreadyExists === true){
+    btn.disabled = false;
+    btn.textContent = '💌 Confirmar';
+    msg.style.color = '#c1546e';
+    msg.textContent = 'Ya estás registrado, ' + name + ' 👀';
+    return;
+  }
+
+  // 2) si no está repetido (o si no pudimos confirmarlo por red), lo guardamos por el Google Form,
+  //    que es el método que ya probamos que entrega los datos sin problemas
+  btn.textContent = 'Enviando...';
+  sendToGoogleForm(name);
+
+  savedNames.push(name.toLowerCase());
+  localStorage.setItem('rsvpNames', JSON.stringify(savedNames));
+
+  nameInput.disabled = true;
+  btn.style.display = 'none';
+  msg.style.color = '#4a7c53';
+  msg.textContent = '¡Gracias por confirmar, ' + name + '! Nos vemos en la feria 🎪';
+  vibrate([15,40,15]);
+  burstPinata();
+  const cardInnerEl = document.getElementById('cardInner');
+  if(cardInnerEl){
+    cardInnerEl.classList.remove('confirmed');
+    void cardInnerEl.offsetWidth;
+    cardInnerEl.classList.add('confirmed');
+  }
+  const waBtn = document.getElementById('whatsappShareBtn');
+  if(waBtn) waBtn.style.display = 'inline-flex';
+  setTimeout(closeRsvpModal, 2200);
+}
+
+/* consulta de SOLO LECTURA al Apps Script: ¿este nombre ya está en la planilla?
+   devuelve true / false, o null si no se pudo consultar (sin bloquear al invitado en ese caso) */
+async function checkDuplicate(name){
+  if(APPS_SCRIPT_URL === 'PENDIENTE') return null;
+  try{
+    const url = APPS_SCRIPT_URL + '?nombre=' + encodeURIComponent(name);
+    const res = await fetch(url, { method: 'GET' });
+    const data = await res.json();
+    return !!data.exists;
+  }catch(err){
+    return null;
+  }
+}
+
+/* guarda el nombre mandándolo al Google Form ya probado (iframe oculto, sin salir de la página) */
+function sendToGoogleForm(name){
+  try{
+    const form = document.createElement('form');
+    form.action = GOOGLE_FORM_ACTION;
+    form.method = 'POST';
+    form.target = 'hiddenRsvpFrame';
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = GOOGLE_FORM_NAME_ENTRY;
+    input.value = name;
+    form.appendChild(input);
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
+  }catch(err){
+    console.log('Error mandando al Google Form:', err);
+  }
+}
+
+/* confeti "piñata": más partículas, mezcla de cuadraditos de color y emojis, con dispersión horizontal */
+function burstPinata(count){
+  count = count || 120;
+  const colors = ['#ff8fb1','#fff3b0','#c8f4de','#e6d9ff','#cdeeff','#ffb27a'];
+  const emojis = ['🎊','⭐','🩷','🍬','✨','🎉'];
+  for(let i=0;i<count;i++){
+    const piece = document.createElement('div');
+    const useEmoji = Math.random() < 0.3;
+    piece.className = 'confetti-piece' + (useEmoji ? ' emoji' : '');
+    piece.style.left = Math.random()*100 + 'vw';
+    piece.style.setProperty('--drift', (Math.random()*180-90) + 'px');
+    piece.style.animationDuration = (2.2 + Math.random()*2.3) + 's';
+    piece.style.animationDelay = (Math.random()*.4) + 's';
+    if(useEmoji){
+      piece.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    } else {
+      piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+      piece.style.width = piece.style.height = (6 + Math.random()*7) + 'px';
+    }
+    document.body.appendChild(piece);
+    setTimeout(()=>piece.remove(), 5200);
+  }
+}
+
+/* confetti localizado (sale desde un punto x,y en vez de llover desde arriba de toda la pantalla) */
+function burstAt(x, y, count){
+  const colors = ['#ff8fb1','#fff3b0','#c8f4de','#e6d9ff','#cdeeff','#ffb27a'];
+  for(let i=0;i<count;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = x + 'px';
+    piece.style.top = y + 'px';
+    piece.style.setProperty('--drift', (Math.random()*200-100) + 'px');
+    piece.style.animationDuration = (1.6 + Math.random()*1.4) + 's';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.width = piece.style.height = (5 + Math.random()*6) + 'px';
+    document.body.appendChild(piece);
+    setTimeout(()=>piece.remove(), 3300);
+  }
+}
+
+function tapBalloon(e, side){
+  e.stopPropagation();
+  vibrate(15);
+  const rect = e.currentTarget.getBoundingClientRect();
+  burstAt(rect.left + rect.width/2, rect.top + rect.height/2, 26);
+}
+
+/* campanita sintetizada con Web Audio, sin necesitar ningún archivo de sonido */
+/* campanita sintetizada, reutilizada tanto al tocar el arcoíris como al terminar de abrirse el sobre */
+function playChime(){
+  try{
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const notes = [880, 1174.7, 1567.98];
+    notes.forEach((freq, i)=>{
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.001, ctx.currentTime + i*0.09);
+      gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + i*0.09 + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i*0.09 + 0.7);
+      osc.connect(gain).connect(ctx.destination);
+      osc.start(ctx.currentTime + i*0.09);
+      osc.stop(ctx.currentTime + i*0.09 + 0.75);
+    });
+  }catch(err){ /* si el navegador bloquea audio sin gesto previo, no pasa nada grave */ }
+}
+function tapRainbow(e){
+  e.stopPropagation();
+  vibrate(10);
+  playChime();
+}
+
+/* tocar la dirección abre Google Maps con el lugar ya buscado, para que sea fácil llegar */
+function openMaps(e){
+  e.stopPropagation();
+  vibrate(10);
+  const query = encodeURIComponent('Salón comunal Veracruz, Cra 101 # 39-25, Colombia');
+  window.open('https://www.google.com/maps/search/?api=1&query=' + query, '_blank');
+}
+
+/* abre Google Calendar directamente con el evento ya prellenado (nombre, fecha, hora y lugar),
+   en vez de descargar un .ics que no todos los celulares saben qué hacer con él */
+function downloadICS(e){
+  e.stopPropagation();
+  const text = encodeURIComponent('Cumpleaños de Mariana 🎪');
+  const dates = '20260912T200000Z/20260912T230000Z'; // 12 sep 2026, 3pm–6pm hora Colombia (UTC-5)
+  const details = encodeURIComponent('¡Un añito de Mariana! Te esperamos para celebrar juntos.');
+  const location = encodeURIComponent('Salón comunal Veracruz, Cra 101 # 39 - 25');
+  const gcalUrl = 'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+    '&text=' + text + '&dates=' + dates + '&details=' + details + '&location=' + location;
+  window.open(gcalUrl, '_blank');
+}
+
+/* ---------------- contador "faltan X días", en vivo según la fecha de hoy ---------------- */
+let countdownTimer = null;
+function updateCountdownBadge(){
+  const el = document.getElementById('ovCountdown');
+  if(!el) return;
+  const eventDate = new Date('2026-09-12T15:00:00-05:00');
+  const now = new Date();
+  const diffMs = eventDate - now;
+  let text;
+  if(diffMs <= 0){
+    text = '💕 ¡Gracias por celebrar con nosotros!';
+  } else {
+    const totalMin = Math.floor(diffMs / 60000);
+    const d = Math.floor(totalMin / 1440);
+    const h = Math.floor((totalMin % 1440) / 60);
+    const m = totalMin % 60;
+    text = '🎉 Faltan ' + d + 'd : ' + String(h).padStart(2,'0') + 'h : ' + String(m).padStart(2,'0') + 'm';
+  }
+  el.innerHTML = '<span class="cd-pill">' + text + '</span>';
+}
+function startCountdownTimer(){
+  updateCountdownBadge();
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(updateCountdownBadge, 30000);
+}
+function stopCountdownTimer(){
+  clearInterval(countdownTimer);
+  countdownTimer = null;
+}
+
+/* ---------------- tinte cálido si abren la tarjeta de noche ---------------- */
+function updateCardNightTint(){
+  const slideEl = document.querySelector('.card-slide');
+  if(!slideEl) return;
+  const hour = new Date().getHours();
+  const isNight = (hour >= 19 || hour < 6);
+  slideEl.classList.toggle('is-night', isNight);
+}
+
+/* ---------------- si ya confirmó antes desde este link, mostrar la insignia en vez del botón ---------------- */
+function checkAlreadyConfirmed(){
+  if(!GUEST_NAME) return;
+  const savedNames = JSON.parse(localStorage.getItem('rsvpNames') || '[]');
+  if(!savedNames.includes(GUEST_NAME.toLowerCase())) return;
+  markConfirmedUI();
+}
+function markConfirmedUI(){
+  const btn = document.getElementById('rsvpOpenBtn');
+  const label = document.getElementById('ovConfirmLabel');
+  const wa = document.getElementById('whatsappShareBtn');
+  if(btn){
+    btn.outerHTML = '<span class="ov-confirmed-badge">✓ Ya confirmaste tu lugar</span>';
+  }
+  if(label) label.style.display = 'none';
+  if(wa) wa.style.display = 'inline-flex';
+}
+
+/* ---------------- compartir por WhatsApp que ya confirmaron ---------------- */
+function shareWhatsApp(e){
+  e.stopPropagation();
+  vibrate(10);
+  const text = encodeURIComponent('¡Ya confirmé mi asistencia al cumple de Mariana! 🎉🎈 Nos vemos el 12 de septiembre.');
+  window.open('https://wa.me/?text=' + text, '_blank');
+}
+
+/* ---------------- guirnalda de lucecitas arriba de la tarjeta, se arma una sola vez ---------------- */
+(function setupCardGarland(){
+  const cardInnerEl = document.getElementById('cardInner');
+  if(!cardInnerEl) return;
+  const layer = document.createElement('div');
+  layer.className = 'card-garland';
+  const colors = ['#ffd27a','#ff9bb8','#a8d8ea'];
+  const count = 14;
+  for(let i=0;i<count;i++){
+    const t = i/(count-1);
+    const sag = Math.sin(t*Math.PI) * 4;
+    const dot = document.createElement('span');
+    dot.className = 'garland-light';
+    dot.style.left = (t*100) + '%';
+    dot.style.top = (1 + sag) + '%';
+    dot.style.animationDelay = (i*0.15) + 's';
+    const c = colors[i % colors.length];
+    dot.style.background = c;
+    dot.style.boxShadow = '0 0 6px 2px ' + c;
+    layer.appendChild(dot);
+  }
+  cardInnerEl.insertBefore(layer, cardInnerEl.firstChild);
+})();
+
+/* ---------------- reacciones rápidas, se recuerdan en este celular ---------------- */
+(function setupReactions(){
+  const REACTION_KEY = 'cardReactions';
+  const saved = JSON.parse(localStorage.getItem(REACTION_KEY) || '[]');
+  document.querySelectorAll('.reaction-btn').forEach(btn=>{
+    const key = btn.dataset.reaction;
+    if(saved.includes(key)) btn.classList.add('reacted');
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      vibrate(12);
+      const rect = btn.getBoundingClientRect();
+      burstAt(rect.left+rect.width/2, rect.top+rect.height/2, 14);
+      if(!btn.classList.contains('reacted')){
+        btn.classList.add('reacted');
+        const s = JSON.parse(localStorage.getItem(REACTION_KEY) || '[]');
+        s.push(key);
+        localStorage.setItem(REACTION_KEY, JSON.stringify(s));
+      }
+    });
+  });
+})();
+
+/* ---------------- aviso de girar el celular si está en horizontal ---------------- */
+function checkOrientation(){
+  const hint = document.getElementById('rotateHint');
+  if(!hint) return;
+  hint.classList.toggle('show', window.innerWidth > window.innerHeight);
+}
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', checkOrientation);
+checkOrientation();
+
+/* ---------------- brillito/chispas al tocar el nombre de Mariana ---------------- */
+function tapName(e){
+  e.stopPropagation();
+  vibrate(10);
+  const rect = e.currentTarget.getBoundingClientRect();
+  burstAt(rect.left + rect.width/2, rect.top + rect.height/2, 16);
+}
+
+/* ---------------- regalo sorpresa: mensaje casi personalizado con el nombre del invitado ---------------- */
+function openGiftMessage(e){
+  e.stopPropagation();
+  vibrate(15);
+  const msgEl = document.getElementById('giftModalMsg');
+  const greeting = GUEST_NAME ? (GUEST_NAME + ', s') : 'S';
+  msgEl.textContent = greeting + 'erá muy especial compartir contigo con el niño interior que aún vive dentro de ti. 💕';
+  document.getElementById('giftModalBackdrop').classList.add('open');
+  burstAt(window.innerWidth/2, window.innerHeight/2, 20);
+}
+function closeGiftModal(e){
+  if(e) e.stopPropagation();
+  document.getElementById('giftModalBackdrop').classList.remove('open');
+}
+document.getElementById('giftModalClose').addEventListener('click', closeGiftModal);
+document.getElementById('giftModalBackdrop').addEventListener('click', (e)=>{
+  if(e.target.id === 'giftModalBackdrop') closeGiftModal(e);
+});
+
+/* ---------------- EDIT MODE ---------------- */
+if(isEditMode){
+  initEditMode();
+}
+
+function initEditMode(){
+  // toolbar
+  const toolbar = document.createElement('div');
+  toolbar.className = 'edit-toolbar';
+  toolbar.innerHTML =
+    '<span class="hint">✏️ <b>Modo edición</b> — tocá cualquier texto para editarlo. En las fotos: arrastrá para mover, usá +/− para hacer zoom.</span>' +
+    '<button class="secondary" id="prevSlideBtn">‹ Anterior</button>' +
+    '<button class="secondary" id="nextSlideBtn">Siguiente ›</button>' +
+    '<button id="saveEditsBtn">💾 Descargar cambios</button>' +
+    '<button class="secondary" id="exitEditBtn">Salir del modo edición</button>';
+  document.body.prepend(toolbar);
+
+  document.getElementById('exitEditBtn').onclick = () => {
+    location.href = location.pathname;
+  };
+  document.getElementById('saveEditsBtn').onclick = exportHTML;
+  document.getElementById('prevSlideBtn').onclick = () => goToSlide(current - 1);
+  document.getElementById('nextSlideBtn').onclick = () => goToSlide(current + 1);
+
+  function goToSlide(idx){
+    if(idx < 0 || idx >= totalSlides) return;
+    slides.forEach(s => s.classList.remove('active'));
+    current = idx;
+    slides[current].classList.add('active');
+    updateDots();
+  }
+  window._editGoToSlide = goToSlide;
+
+  // avanzar de diapositiva manualmente con flechas del teclado, ya que el click queda para editar
+  document.addEventListener('keydown', (e) => {
+    if(e.target && e.target.isContentEditable) return;
+    if(e.key === 'ArrowRight') nextSlide();
+    if(e.key === 'ArrowLeft' && current > 0){
+      slides.forEach(s => s.classList.remove('active'));
+      current -= 1;
+      slides[current].classList.add('active');
+      updateDots();
+    }
+  });
+
+  // textos editables
+  const editableSelectors = [
+    '.slide-caption h2', '.slide-caption p',
+    '.ov-eyebrow', '.ov-name', '.ov-ribbon', '.ov-desc',
+    '.ov-date-num', '.ov-date-sub', '.ov-time', '.ov-time-sub', '.ov-place', '.ov-place-sub',
+    '.ov-confirm'
+  ];
+  document.querySelectorAll(editableSelectors.join(',')).forEach(el => {
+    el.setAttribute('contenteditable', 'true');
+  });
+
+  // no avanzar de diapositiva al tocar un texto editable o una foto
+  document.getElementById('stage').addEventListener('click', (e) => {
+    if(e.target.closest('.zoom-controls')) return; // dejar pasar los clicks de +/-
+    if(e.target.closest('[contenteditable="true"]') || e.target.closest('.photo-frame')){
+      e.stopPropagation();
+    }
+  }, true);
+
+  // reencuadre manual de fotos: arrastrar para mover, botones para hacer zoom o alejar (ver la foto completa)
+  document.querySelectorAll('.photo-frame').forEach(frame => {
+    const img = frame.querySelector('img');
+    if(!img || !img._photoState) return;
+    const state = img._photoState;
+
+    let dragging = false, lastX=0, lastY=0;
+
+    img.style.cursor = 'grab';
+
+    img.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      lastX = e.clientX; lastY = e.clientY;
+      img.setPointerCapture(e.pointerId);
+    });
+    img.addEventListener('pointermove', (e) => {
+      if(!dragging) return;
+      const rect = img.getBoundingClientRect();
+      state.panX += ((e.clientX - lastX) / rect.width) * 100;
+      state.panY += ((e.clientY - lastY) / rect.height) * 100;
+      lastX = e.clientX; lastY = e.clientY;
+      img._savePan();
+      img._applyTransform();
+    });
+    img.addEventListener('pointerup', () => { dragging = false; });
+    img.addEventListener('pointercancel', () => { dragging = false; });
+
+    const zc = document.createElement('div');
+    zc.className = 'zoom-controls';
+    zc.innerHTML = '<button type="button" data-z="-1">−</button><button type="button" data-z="1">+</button>';
+    frame.appendChild(zc);
+    zc.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dir = parseInt(btn.dataset.z, 10);
+        state.zoom = Math.round(Math.min(3, Math.max(0.4, state.zoom + dir*0.1)) * 100) / 100;
+        img.dataset.zoom = state.zoom;
+        img._applyTransform();
+      });
+    });
+  });
+}
+
+function exportHTML(){
+  const clone = document.documentElement.cloneNode(true);
+  clone.querySelectorAll('[contenteditable]').forEach(el => el.removeAttribute('contenteditable'));
+  clone.querySelectorAll('.edit-toolbar').forEach(el => el.remove());
+  clone.querySelectorAll('.zoom-controls').forEach(el => el.remove());
+  clone.querySelectorAll('.crop-guide').forEach(el => el.remove());
+  const cloneBody = clone.querySelector('body');
+  if(cloneBody) cloneBody.classList.remove('edit-mode');
+
+  const html = '<!DOCTYPE html>\n' + clone.outerHTML;
+  const blob = new Blob([html], {type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'index.html';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  alert('Listo. Se descargó "index.html" con tus cambios. Arrastralo a Netlify (pestaña Deploys de tu sitio) para publicarlo.');
+}
+</script>
+
+
+
+</body></html>
