@@ -36,11 +36,17 @@
   }
   button:active{transform:scale(.98);}
   #results{max-width:560px; margin:0 auto;}
+  .toolbar-row{max-width:560px; margin:0 auto; display:flex; gap:10px;}
+  .toolbar-row button{margin-top:0;}
+  #saveListBtn{background:linear-gradient(135deg,#ffd9a0,#ffbf6b); color:#5a3a10;}
+  .progress-note{max-width:560px; margin:10px auto 4px; font-size:.8rem; color:#a08890; text-align:center;}
   .link-row{
     display:flex; align-items:center; gap:10px; background:#fff; border-radius:14px; padding:12px 14px;
     margin-bottom:10px; box-shadow:0 4px 12px rgba(0,0,0,.05);
+    transition:opacity .2s ease;
   }
   .link-row{flex-wrap:wrap;}
+  .link-row.sent{opacity:.55;}
   .link-row .name{font-weight:700; flex:0 0 auto; min-width:120px; color:#6b5560;}
   .link-row .url{flex:1; min-width:180px; font-size:.78rem; color:#8a7fc0; word-break:break-all;}
   .link-row .gender-select{
@@ -51,6 +57,15 @@
     flex:0 0 auto; background:#ffe3ee; color:#e8789e; border:none; border-radius:999px;
     padding:7px 14px; font-size:.78rem; font-weight:700; cursor:pointer; white-space:nowrap;
   }
+  .link-row .wa-btn{
+    flex:0 0 auto; background:#dcf5e3; color:#1f8a45; border:none; border-radius:999px;
+    padding:7px 14px; font-size:.78rem; font-weight:700; cursor:pointer; white-space:nowrap;
+  }
+  .link-row .sent-btn{
+    flex:0 0 auto; background:#f2eee9; color:#8a7d78; border:none; border-radius:999px;
+    padding:7px 12px; font-size:.78rem; font-weight:700; cursor:pointer; white-space:nowrap;
+  }
+  .link-row.sent .sent-btn{background:#c8f4de; color:#2f5233;}
   .copy-btn.copied{background:#c8f4de; color:#2f5233;}
   #copyAllBtn{background:linear-gradient(135deg,#a8d8ea,#8fc3e0); color:#1c3f4d; margin-bottom:20px;}
 </style>
@@ -74,6 +89,16 @@
 <div id="results"></div>
 
 <script>
+// mensaje fijo que se manda por WhatsApp junto con el link personalizado de cada invitado
+const WA_MESSAGE =
+  '🌸 Mariana cumple su primer añito 🌸\n' +
+  'Hace un año llegó a nuestras vidas para llenarlas de amor, sonrisas y momentos inolvidables. ❤️\n' +
+  'Hoy queremos celebrar su primer año de vida rodeados de las personas que queremos.\n' +
+  '🎀 Nos encantaría que nos acompañaras en este día tan especial.\n' +
+  '✨ En el Link adjunto puedes ver todos los detalles de la celebración.';
+
+const STORAGE_KEY = 'invitadosListaMariana';
+
 // intenta autocompletar con la URL de esta misma carpeta, reemplazando invitados.html por index.html
 (function(){
   const guess = location.href.replace(/invitados\.html.*$/, 'index.html');
@@ -82,8 +107,86 @@
   }
 })();
 
+// asegura que el link SIEMPRE lleve https:// (o http://) adelante — si falta, WhatsApp no lo detecta como link tocable
+function normalizeBase(u){
+  u = (u || '').trim();
+  if(!u) return u;
+  if(!/^https?:\/\//i.test(u)){
+    u = 'https://' + u;
+  }
+  return u;
+}
+
+// arma el link según el género elegido: sin elegir nada, no manda &g= y el sitio saluda neutro ("Bienvenid@")
+function buildUrl(base, sep, name, gender){
+  let u = base + sep + 'n=' + encodeURIComponent(name);
+  if(gender) u += '&g=' + gender;
+  return u;
+}
+
+function crearFila(resultsEl, base, sep, name, savedState){
+  savedState = savedState || {};
+  let gender = savedState.gender || '';
+  let sent = !!savedState.sent;
+
+  const row = document.createElement('div');
+  row.className = 'link-row' + (sent ? ' sent' : '');
+  row.dataset.name = name;
+  row.innerHTML =
+    '<span class="name">' + name + '</span>' +
+    '<select class="gender-select">' +
+      '<option value="">Bienvenid@ (neutro)</option>' +
+      '<option value="m">Bienvenido (él)</option>' +
+      '<option value="f">Bienvenida (ella)</option>' +
+      '<option value="p">Bienvenidos (varios)</option>' +
+    '</select>' +
+    '<span class="url"></span>' +
+    '<button class="copy-btn" type="button">Copiar</button>' +
+    '<button class="wa-btn" type="button">📲 WhatsApp</button>' +
+    '<button class="sent-btn" type="button">' + (sent ? '✓ Enviado' : 'Marcar enviado') + '</button>';
+
+  const urlEl = row.querySelector('.url');
+  const selectEl = row.querySelector('.gender-select');
+  selectEl.value = gender;
+
+  function refresh(){ urlEl.textContent = buildUrl(base, sep, name, gender); }
+  refresh();
+
+  selectEl.addEventListener('change', () => {
+    gender = selectEl.value;
+    refresh();
+    guardarLista(resultsEl);
+  });
+
+  row.querySelector('.copy-btn').addEventListener('click', function(){
+    navigator.clipboard.writeText(urlEl.textContent).then(() => {
+      this.textContent = '¡Copiado!';
+      this.classList.add('copied');
+      setTimeout(() => { this.textContent = 'Copiar'; this.classList.remove('copied'); }, 1500);
+    });
+  });
+
+  // botón de WhatsApp: copia el mensaje completo (texto + link) por si hace falta pegarlo a mano,
+  // y además abre WhatsApp con el mensaje ya cargado para elegir a quién mandárselo
+  row.querySelector('.wa-btn').addEventListener('click', function(){
+    const fullMsg = WA_MESSAGE + '\n\n' + urlEl.textContent;
+    navigator.clipboard.writeText(fullMsg).catch(() => {});
+    window.open('https://wa.me/?text=' + encodeURIComponent(fullMsg), '_blank');
+  });
+
+  row.querySelector('.sent-btn').addEventListener('click', function(){
+    sent = !sent;
+    row.classList.toggle('sent', sent);
+    this.textContent = sent ? '✓ Enviado' : 'Marcar enviado';
+    guardarLista(resultsEl);
+  });
+
+  resultsEl.appendChild(row);
+}
+
 function generar(){
-  let base = document.getElementById('baseUrl').value.trim();
+  let base = normalizeBase(document.getElementById('baseUrl').value);
+  document.getElementById('baseUrl').value = base;
   if(!base){ alert('Pegá primero el link de tu invitación'); return; }
   if(!base.includes('?') && !base.endsWith('/') && !base.endsWith('.html')){
     base += '/';
@@ -100,53 +203,25 @@ function generar(){
 
   if(names.length === 0){ alert('Pegá al menos un nombre'); return; }
 
+  const toolbarRow = document.createElement('div');
+  toolbarRow.className = 'toolbar-row';
   const allBtn = document.createElement('button');
   allBtn.id = 'copyAllBtn';
   allBtn.textContent = '📋 Copiar todos los links (con nombre)';
-  resultsEl.appendChild(allBtn);
+  const saveBtn = document.createElement('button');
+  saveBtn.id = 'saveListBtn';
+  saveBtn.type = 'button';
+  saveBtn.textContent = '💾 Guardar lista';
+  toolbarRow.appendChild(allBtn);
+  toolbarRow.appendChild(saveBtn);
+  resultsEl.appendChild(toolbarRow);
 
-  // arma el link según el género elegido: sin elegir nada, no manda &g= y el sitio saluda neutro ("Bienvenid@")
-  function buildUrl(name, gender){
-    let u = base + sep + 'n=' + encodeURIComponent(name);
-    if(gender) u += '&g=' + gender;
-    return u;
-  }
+  const note = document.createElement('p');
+  note.className = 'progress-note';
+  note.textContent = 'Tu lista se guarda sola en este navegador. Si no alcanzás a mandarlas todas, marcá "Enviado" en las que ya mandaste — al volver a abrir esta página, tu progreso sigue ahí.';
+  resultsEl.appendChild(note);
 
-  names.forEach((name) => {
-    let gender = ''; // '', 'm' o 'f'
-
-    const row = document.createElement('div');
-    row.className = 'link-row';
-    row.innerHTML =
-      '<span class="name">' + name + '</span>' +
-      '<select class="gender-select">' +
-        '<option value="">Bienvenid@ (neutro)</option>' +
-        '<option value="m">Bienvenido (él)</option>' +
-        '<option value="f">Bienvenida (ella)</option>' +
-        '<option value="p">Bienvenidos (varios)</option>' +
-      '</select>' +
-      '<span class="url"></span>' +
-      '<button class="copy-btn" type="button">Copiar</button>';
-
-    const urlEl = row.querySelector('.url');
-    const selectEl = row.querySelector('.gender-select');
-    function refresh(){ urlEl.textContent = buildUrl(name, gender); }
-    refresh();
-
-    selectEl.addEventListener('change', () => {
-      gender = selectEl.value;
-      refresh();
-    });
-
-    row.querySelector('.copy-btn').addEventListener('click', function(){
-      navigator.clipboard.writeText(urlEl.textContent).then(() => {
-        this.textContent = '¡Copiado!';
-        this.classList.add('copied');
-        setTimeout(() => { this.textContent = 'Copiar'; this.classList.remove('copied'); }, 1500);
-      });
-    });
-    resultsEl.appendChild(row);
-  });
+  names.forEach((name) => crearFila(resultsEl, base, sep, name, {}));
 
   allBtn.addEventListener('click', () => {
     const lines = Array.from(resultsEl.querySelectorAll('.link-row')).map(row =>
@@ -157,7 +232,111 @@ function generar(){
       setTimeout(() => { allBtn.textContent = '📋 Copiar todos los links (con nombre)'; }, 1800);
     });
   });
+
+  // botón "Guardar lista": guarda el progreso en este navegador y además descarga un .txt de respaldo,
+  // por si el celular se resetea o querés seguir mandando invitaciones desde otro lado
+  saveBtn.addEventListener('click', () => {
+    guardarLista(resultsEl);
+    const lines = Array.from(resultsEl.querySelectorAll('.link-row')).map(row => {
+      const sent = row.classList.contains('sent') ? ' [ENVIADO]' : '';
+      return row.querySelector('.name').textContent + ': ' + row.querySelector('.url').textContent + sent;
+    });
+    const blob = new Blob([lines.join('\n')], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'invitaciones-mariana.txt';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    saveBtn.textContent = '¡Guardado!';
+    setTimeout(() => { saveBtn.textContent = '💾 Guardar lista'; }, 1800);
+  });
+
+  guardarLista(resultsEl);
 }
+
+// guarda en este navegador: base, lista de nombres, género elegido y quién ya está marcado como enviado
+function guardarLista(resultsEl){
+  const base = document.getElementById('baseUrl').value;
+  const rows = Array.from(resultsEl.querySelectorAll('.link-row')).map(row => ({
+    name: row.dataset.name,
+    gender: row.querySelector('.gender-select').value,
+    sent: row.classList.contains('sent')
+  }));
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ base, rows }));
+  }catch(err){ /* si el navegador bloquea localStorage, no pasa nada grave: solo no se recuerda */ }
+}
+
+// al abrir la página, si había una lista guardada de una vez anterior, la vuelve a mostrar
+(function restaurarLista(){
+  let saved;
+  try{ saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); }catch(err){ saved = null; }
+  if(!saved || !saved.rows || !saved.rows.length) return;
+
+  document.getElementById('baseUrl').value = saved.base || document.getElementById('baseUrl').value;
+  document.getElementById('names').value = saved.rows.map(r => r.name).join('\n');
+
+  let base = normalizeBase(saved.base);
+  if(!base.includes('?') && !base.endsWith('/') && !base.endsWith('.html')){
+    base += '/';
+  }
+  const sep = base.includes('?') ? '&' : '?';
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.innerHTML = '';
+
+  const toolbarRow = document.createElement('div');
+  toolbarRow.className = 'toolbar-row';
+  const allBtn = document.createElement('button');
+  allBtn.id = 'copyAllBtn';
+  allBtn.textContent = '📋 Copiar todos los links (con nombre)';
+  const saveBtn = document.createElement('button');
+  saveBtn.id = 'saveListBtn';
+  saveBtn.type = 'button';
+  saveBtn.textContent = '💾 Guardar lista';
+  toolbarRow.appendChild(allBtn);
+  toolbarRow.appendChild(saveBtn);
+  resultsEl.appendChild(toolbarRow);
+
+  const note = document.createElement('p');
+  note.className = 'progress-note';
+  note.textContent = 'Lista recuperada de tu última visita. Seguí marcando "Enviado" a medida que avanzás.';
+  resultsEl.appendChild(note);
+
+  saved.rows.forEach(r => crearFila(resultsEl, base, sep, r.name, r));
+
+  allBtn.addEventListener('click', () => {
+    const lines = Array.from(resultsEl.querySelectorAll('.link-row')).map(row =>
+      row.querySelector('.name').textContent + ': ' + row.querySelector('.url').textContent
+    );
+    navigator.clipboard.writeText(lines.join('\n')).then(() => {
+      allBtn.textContent = '¡Copiados todos!';
+      setTimeout(() => { allBtn.textContent = '📋 Copiar todos los links (con nombre)'; }, 1800);
+    });
+  });
+
+  saveBtn.addEventListener('click', () => {
+    guardarLista(resultsEl);
+    const lines = Array.from(resultsEl.querySelectorAll('.link-row')).map(row => {
+      const sent = row.classList.contains('sent') ? ' [ENVIADO]' : '';
+      return row.querySelector('.name').textContent + ': ' + row.querySelector('.url').textContent + sent;
+    });
+    const blob = new Blob([lines.join('\n')], {type:'text/plain'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'invitaciones-mariana.txt';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    saveBtn.textContent = '¡Guardado!';
+    setTimeout(() => { saveBtn.textContent = '💾 Guardar lista'; }, 1800);
+  });
+})();
 </script>
 
 </body>
